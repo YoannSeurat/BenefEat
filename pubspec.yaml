@@ -1,4 +1,4 @@
-name: delivery_project
+name: benefeat
 description: "A new Flutter project."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
@@ -68,22 +68,21 @@ flutter:
   # For details regarding adding assets from package dependencies, see
   # https://flutter.dev/to/asset-from-package
 
-  # To add custom fonts to your application, add a fonts section here,
-  # in this "flutter" section. Each entry in this list should have a
+  # To add custom fonts to your application, add a fonts section here.
+  # Each entry in this list should have a
   # "family" key with the font family name, and a "fonts" key with a
   # list giving the asset and other descriptors for the font. For
-  # example:
-  # fonts:
-  #   - family: Schyler
-  #     fonts:
-  #       - asset: fonts/Schyler-Regular.ttf
-  #       - asset: fonts/Schyler-Italic.ttf
-  #         style: italic
-  #   - family: Trajan Pro
-  #     fonts:
-  #       - asset: fonts/TrajanPro.ttf
-  #       - asset: fonts/TrajanPro_Bold.ttf
-  #         weight: 700
-  #
+  fonts:
+    - family: Chillax
+      fonts:
+        - asset: lib/assets/fonts/Chillax-ExtraLight.otf
+          weight: 200
+        - asset: lib/assets/fonts/Chillax-Light.otf
+          weight: 300
+        - asset: lib/assets/fonts/Chillax-Regular.otf
+        - asset: lib/assets/fonts/Chillax-SemiBold.otf
+          weight: 600
+        - asset: lib/assets/fonts/Chillax-Bold.otf
+          weight: 700
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package

@@ -1,6 +1,6 @@
 {
-    "name": "delivery_project",
-    "short_name": "delivery_project",
+    "name": "benefeat",
+    "short_name": "benefeat",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
