@@ -23,13 +23,13 @@ You may make only such reasonable number of back-up copies suitable to your perm
 You may but are not required to identify Indian Type Foundry Fonts in your work credits. 
 
 02. Limitations of usage
-You may not modify, edit, adapt, translate, reverse engineer, decompile or disassemble, alter or otherwise copy the Font Software or the designs embodied therein in whole or in part"../../../../../fonts/Chillax_Complete/License", without the prior written consent of the Licensor. 
+You may not modify, edit, adapt, translate, reverse engineer, decompile or disassemble, alter or otherwise copy the Font Software or the designs embodied therein in whole or in part"../../../../fonts/Chillax_Complete/License", without the prior written consent of the Licensor. 
 The Fonts may not - beyond the permitted copies and the uses defined herein - be distributed, duplicated, loaned, resold or licensed in any way, whether by lending, donating or give otherwise to a person or entity. This includes the distribution of the Fonts by e-mail, on USB sticks, CD-ROMs, or other media, uploading them in a public server or making the fonts available on peer-to-peer networks. A passing on to external designers or service providers (design agencies, repro studios, printers, etc.) is also not permitted. 
 You are not allowed to transmit the Font Software over the Internet in font serving or for font replacement by means of technologies such as but not limited to EOT, Cufon, sIFR or similar technologies that may be developed in the future without the prior written consent of the Licensor. 
 
 03. Embedding
 You may embed the Font Software in PDF and other digital documents provided that is done in a secured, read-only mode. It must be ensured beyond doubt that the recipient cannot use the Font Software to edit or to create new documents. The design data (PDFs) created in this way and under these created design data (PDFs) may be distributed in any number. 
-The extraction of the Font Software in whole or in part "../../../../../fonts/Chillax_Complete/License"is prohibited. 
+The extraction of the Font Software in whole or in part "../../../../fonts/Chillax_Complete/License"is prohibited. 
 
 04. Third party use, Commercial print service provider
 You may include the Font Software in a non-editable electronic document solely for printing and display purposes and provide that electronic document to the commercial print service provider for the purpose of printing. If the print service needs to install the fonts, they too need to download the Font Software from the Licensor's website.
