@@ -59,7 +59,10 @@ flutter:
     - assets/logos/logo_transparent_redblack.svg
     - assets/logos/logo_transparent_redblack.png
     - assets/navbar/home_active.png
+    - assets/navbar/home_inactive.png
+    - assets/navbar/recipes_active.png
     - assets/navbar/recipes_inactive.png
+    - assets/navbar/star_active.png
     - assets/navbar/star_inactive.png
     - assets/appbar/userprofile_black.png
     - assets/appbar/hamburger_black.png
