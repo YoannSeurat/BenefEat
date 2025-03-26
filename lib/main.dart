@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:benefeat/pages/home.dart';
 import 'package:benefeat/pages/recipes.dart';
 import 'package:benefeat/pages/favorites.dart';
-import 'package:benefeat/design/colors.dart' as colors;
+import 'package:benefeat/constants/colors.dart' as colors;
+import 'package:benefeat/constants/constants.dart' as constants;
 
 void main() => runApp(const MyApp());
 
@@ -66,10 +67,11 @@ class _MainPageState extends State<MainPage> {
 
 AppBar appBar() {
   return AppBar(
-    backgroundColor: colors.white.withAlpha(100),
+    backgroundColor: colors.white.withAlpha(50),
+    toolbarHeight: constants.APPBAR_HEIGHT,
     flexibleSpace: ClipRRect(
       child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
+        filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
         child: Container(
           color: Colors.transparent,
         ),
