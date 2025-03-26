@@ -1,4 +1,6 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
+
 import 'package:benefeat/pages/home.dart';
 import 'package:benefeat/pages/recipes.dart';
 import 'package:benefeat/pages/favorites.dart';
@@ -6,9 +8,14 @@ import 'package:benefeat/design/colors.dart' as colors;
 
 void main() => runApp(const MyApp());
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -48,6 +55,7 @@ class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: appBar(),
       body: _pages[_selectedIndex],
       bottomNavigationBar: navigationBar(_selectedIndex, _onItemTapped),
@@ -58,6 +66,16 @@ class _MainPageState extends State<MainPage> {
 
 AppBar appBar() {
   return AppBar(
+    backgroundColor: colors.white.withAlpha(100),
+    flexibleSpace: ClipRRect(
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
+        child: Container(
+          color: Colors.transparent,
+        ),
+      ),
+    ),
+    elevation: 0,
     leading: GestureDetector(
       onTap: () {
         // TODO : Open sidebar
@@ -76,7 +94,6 @@ AppBar appBar() {
       width: 70,
     ),
     centerTitle: true,
-    backgroundColor: colors.white,
     actions: [
       GestureDetector(
         onTap: () {
