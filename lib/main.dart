@@ -117,12 +117,17 @@ AppBar appBar() {
 ClipRRect navigationBar(int selectedIndex, Function(int) onItemTapped) {
   return ClipRRect(
     borderRadius: const BorderRadius.only(
-      topLeft: Radius.circular(20.0),
-      topRight: Radius.circular(20.0),
+      topLeft: Radius.circular(30.0),
+      topRight: Radius.circular(30.0),
     ),
     child: NavigationBar(
       onDestinationSelected: onItemTapped,
       selectedIndex: selectedIndex,
+      labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
+      backgroundColor: colors.darkred,
+      animationDuration: const Duration(milliseconds: 200),
+      height: constants.NAVBAR_HEIGHT,
+      indicatorColor: Colors.transparent,
       destinations: [
         NavigationDestination(
           icon: Column(
@@ -200,11 +205,6 @@ ClipRRect navigationBar(int selectedIndex, Function(int) onItemTapped) {
           label: 'Favoris',
         ),
       ],
-      labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
-      backgroundColor: colors.darkred,
-      animationDuration: const Duration(milliseconds: 200),
-      height: 60,
-      indicatorColor: Colors.transparent,
     ),
   );
 }
