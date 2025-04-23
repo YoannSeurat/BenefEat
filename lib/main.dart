@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:benefeat/pages/home.dart';
 import 'package:benefeat/pages/recipes.dart';
 import 'package:benefeat/pages/favorites.dart';
+import 'package:benefeat/pages/user/settings.dart';
+import 'package:benefeat/pages/user/account.dart';
 import 'package:benefeat/constants/colors.dart' as colors;
 import 'package:benefeat/constants/constants.dart' as constants;
 
@@ -57,12 +59,30 @@ class _MainPageState extends State<MainPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: true,
+      drawer: drawer(),
       appBar: appBar(),
       body: _pages[_selectedIndex],
       bottomNavigationBar: navigationBar(_selectedIndex, _onItemTapped),
       backgroundColor: colors.white,
     );
   }
+}
+
+Drawer drawer() {
+  return Drawer(
+    backgroundColor: colors.white,
+    child: Column(
+      children: [
+        DrawerHeader(
+          decoration: BoxDecoration(color: colors.red),
+          child: SizedBox(
+            height: 150,
+            width: double.infinity,
+          ),
+        ),
+      ]
+    )
+  );
 }
 
 AppBar appBar() {
@@ -78,39 +98,150 @@ AppBar appBar() {
       ),
     ),
     elevation: 0,
-    leading: GestureDetector(
-      onTap: () {
-        // TODO : Open sidebar
+
+    leading: Builder(
+      builder: (context) {
+        return GestureDetector(
+          onTap: () {
+            Scaffold.of(context).openDrawer(); // Open the drawer/ Call the callback to handle animation
+          },
+          child: Container(
+            margin: const EdgeInsets.only(left: 20, top: 10),
+            alignment: Alignment.center,
+            child: Image.asset(
+              'assets/appbar/hamburger_black.png',
+              width: 25,
+            ),
+          ),
+        );
       },
-      child: Container(
-        margin: const EdgeInsets.only(left: 20, top: 10),
-        alignment: Alignment.center,
-        child: Image.asset(
-          'assets/appbar/hamburger_black.png',
-          width: 25,
-        ),
-      ),
     ),
+
     title: Image.asset(
       'assets/logos/logo_transparent_redblack.png',
       width: 70,
     ),
     centerTitle: true,
-    actions: [
-      GestureDetector(
-        onTap: () {
-          // TODO : Open dropdown user list
-        },
-        child: Container(
-          margin: const EdgeInsets.only(right: 20, top: 10, bottom: 10),
-          alignment: Alignment.center,
-          child: Image.asset(
-            'assets/appbar/userprofile_black.png',
-            width: 35,
-          ),
-        ),
+
+    actions: [ // Profile
+      Builder(
+        builder: (context) {
+          return GestureDetector(
+            onTap: () { // Open dropdown user list
+              showMenu(
+                context: context,
+                position: const RelativeRect.fromLTRB(100, 120, 10, 0),
+                popUpAnimationStyle: AnimationStyle(
+                  curve: Curves.easeInOut,
+                  duration: const Duration(milliseconds: 300),
+                  reverseCurve: Curves.easeInOut,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                color: colors.whiter,
+
+                items: [
+                  PopupMenuItem(
+                    value: 'account',
+                    child: Row(
+                      children: [
+                        const SizedBox(width: 10),
+                        Image.asset('assets/appbar/userprofile_black.png', width: 25,),
+                        const SizedBox(width: 10),
+                        const Text('Compte'),
+                      ],
+                    ),
+                  ),
+                  PopupMenuItem(
+                    value: 'settings',
+                    child: Row(
+                      children: [
+                        const SizedBox(width: 10),
+                        Icon(Icons.settings, color: colors.black,),
+                        const SizedBox(width: 10),
+                        const Text('Paramètres'),
+                      ],
+                    ),
+                  ),
+                  PopupMenuItem(
+                    value: 'logout',
+                    child: Row(
+                      children: [
+                        const SizedBox(width: 10),
+                        Icon(Icons.logout, color: colors.black),
+                        const SizedBox(width: 10),
+                        const Text('Se Déconnecter'),
+                      ],
+                    ),
+                  ),
+                ],
+              ).then((value) {
+                if (!context.mounted) return;
+                if (value == 'account') {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => const AccountPage()));
+                } else if (value == 'settings') {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => const SettingsPage()));
+                } else if (value == 'logout') {
+                  logout(context);
+                }
+              });
+            },
+            child: Container(
+              margin: const EdgeInsets.only(right: 20, top: 10, bottom: 10),
+              alignment: Alignment.center,
+              child: Image.asset(
+                'assets/appbar/userprofile_black.png',
+                width: 35,
+              ),
+            ),
+          );
+        }
       )
     ],
+  );
+}
+
+void logout(BuildContext context) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+      title: const Text('Confirmation'),
+      content: const Text('Es tu sûr de vouloir te déconnecter ?'),
+      actions: [
+        TextButton(
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+          child: const Text('Annuler'),
+        ),
+        TextButton(
+        onPressed: () {
+          // TODO en backend : logout le pelo
+          Navigator.of(context).pop(); 
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: const Text('Tu as bien été déconnecté',),
+                actions: [
+                  TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('OK'),
+                  ),
+                ],
+              );
+            },
+          );
+        },
+        child: const Text('Se déconnecter'),
+        ),
+      ],
+      );
+    },
   );
 }
 
@@ -131,7 +262,7 @@ ClipRRect navigationBar(int selectedIndex, Function(int) onItemTapped) {
       destinations: [
         NavigationDestination(
           icon: Column(
-            mainAxisAlignment: MainAxisAlignment.end,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Padding(
                 padding: const EdgeInsets.only(top: 8.0),
@@ -156,7 +287,7 @@ ClipRRect navigationBar(int selectedIndex, Function(int) onItemTapped) {
         ),
         NavigationDestination(
           icon: Column(
-            mainAxisAlignment: MainAxisAlignment.end,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Padding(
                 padding: const EdgeInsets.only(top: 8.0),
@@ -181,7 +312,7 @@ ClipRRect navigationBar(int selectedIndex, Function(int) onItemTapped) {
         ),
         NavigationDestination(
           icon: Column(
-            mainAxisAlignment: MainAxisAlignment.end,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Padding(
                 padding: const EdgeInsets.only(top: 8.0),
