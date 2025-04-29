@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'dart:ui';
 
 import 'package:benefeat/pages/user/login.dart';
 import 'package:benefeat/constants/colors.dart' as colors;
@@ -11,34 +10,10 @@ class AccountPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: appBar(),
       backgroundColor: colors.white,
       body: body(context),
     );
   }
-}
-
-
-AppBar appBar() {
-  return AppBar(
-    backgroundColor: colors.white.withAlpha(50),
-    toolbarHeight: constants.APPBAR_HEIGHT,
-    flexibleSpace: ClipRRect(
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
-        child: Container(
-          color: Colors.transparent,
-        ),
-      ),
-    ),
-    elevation: 0,
-
-    title: Image.asset(
-      'assets/logos/logo_transparent_redblack.png',
-      width: 70,
-    ),
-    centerTitle: true,
-  );
 }
 
 
@@ -49,7 +24,7 @@ Container body(BuildContext context) {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          SizedBox(height: 50,),
+          SizedBox(height: constants.APPBAR_HEIGHT + 100,),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             spacing: 15,

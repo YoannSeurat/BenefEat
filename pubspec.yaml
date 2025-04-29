@@ -35,6 +35,7 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
   flutter_native_splash: ^2.4.6
+  
 
 dev_dependencies:
   flutter_test:
@@ -59,12 +60,13 @@ flutter:
     - assets/logos/logo_transparent_redblack.png
     - assets/navbar/home_active.png
     - assets/navbar/home_inactive.png
-    - assets/navbar/recipes_active.png
-    - assets/navbar/recipes_inactive.png
     - assets/navbar/star_active.png
     - assets/navbar/star_inactive.png
+    - assets/navbar/userprofile_active.png
+    - assets/navbar/userprofile_inactive.png
+    - assets/navbar/products_active.png
+    - assets/navbar/products_inactive.png
     - assets/appbar/userprofile_black.png
-    - assets/appbar/hamburger_black.png
     - assets/searchbar/search_grey.png
     - assets/backgrounds/splashscreen_background.png
     - assets/backgrounds/loginpage_background.png

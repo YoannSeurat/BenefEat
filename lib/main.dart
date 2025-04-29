@@ -2,8 +2,8 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 
 import 'package:benefeat/pages/home.dart';
-import 'package:benefeat/pages/recipes.dart';
 import 'package:benefeat/pages/favorites.dart';
+import 'package:benefeat/pages/products.dart';
 import 'package:benefeat/pages/user/settings.dart';
 import 'package:benefeat/pages/user/account.dart';
 import 'package:benefeat/constants/colors.dart' as colors;
@@ -45,8 +45,9 @@ class _MainPageState extends State<MainPage> {
 
   final List<Widget> _pages = [
     const HomePage(),
-    const RecipesPage(),
+    const ProductsPage(),
     const FavoritesPage(),
+    const AccountPage(),
   ];
 
   void _onItemTapped(int index) {
@@ -59,30 +60,12 @@ class _MainPageState extends State<MainPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: true,
-      drawer: drawer(),
       appBar: appBar(),
       body: _pages[_selectedIndex],
       bottomNavigationBar: navigationBar(_selectedIndex, _onItemTapped),
       backgroundColor: colors.white,
     );
   }
-}
-
-Drawer drawer() {
-  return Drawer(
-    backgroundColor: colors.white,
-    child: Column(
-      children: [
-        DrawerHeader(
-          decoration: BoxDecoration(color: colors.red),
-          child: SizedBox(
-            height: 150,
-            width: double.infinity,
-          ),
-        ),
-      ]
-    )
-  );
 }
 
 AppBar appBar() {
@@ -99,30 +82,13 @@ AppBar appBar() {
     ),
     elevation: 0,
 
-    leading: Builder(
-      builder: (context) {
-        return GestureDetector(
-          onTap: () {
-            Scaffold.of(context).openDrawer(); // Open the drawer/ Call the callback to handle animation
-          },
-          child: Container(
-            margin: const EdgeInsets.only(left: 20, top: 10),
-            alignment: Alignment.center,
-            child: Image.asset(
-              'assets/appbar/hamburger_black.png',
-              width: 25,
-            ),
-          ),
-        );
-      },
-    ),
-
     title: Image.asset(
       'assets/logos/logo_transparent_redblack.png',
       width: 70,
     ),
     centerTitle: true,
 
+    /*
     actions: [ // Profile
       Builder(
         builder: (context) {
@@ -199,6 +165,7 @@ AppBar appBar() {
         }
       )
     ],
+    */
   );
 }
 
@@ -268,8 +235,8 @@ ClipRRect navigationBar(int selectedIndex, Function(int) onItemTapped) {
                 padding: const EdgeInsets.only(top: 8.0),
                 child: Image.asset(
                   selectedIndex == 0
-                      ? "assets/navbar/home_active.png" // Active icon
-                      : "assets/navbar/home_inactive.png", // Inactive icon
+                    ? "assets/navbar/home_active.png"
+                    : "assets/navbar/home_inactive.png",
                   width: 20,
                 ),
               ),
@@ -293,14 +260,14 @@ ClipRRect navigationBar(int selectedIndex, Function(int) onItemTapped) {
                 padding: const EdgeInsets.only(top: 8.0),
                 child: Image.asset(
                   selectedIndex == 1
-                      ? "assets/navbar/recipes_active.png"
-                      : "assets/navbar/recipes_inactive.png",
+                    ? "assets/navbar/products_active.png"
+                    : "assets/navbar/products_inactive.png",
                   width: 20,
                 ),
               ),
               const SizedBox(height: 4),
               Text(
-                'Recettes',
+                'Produits',
                 style: TextStyle(
                   color: selectedIndex == 1 ? Colors.white : colors.lightgreyred,
                   fontWeight: FontWeight.w600,
@@ -308,7 +275,7 @@ ClipRRect navigationBar(int selectedIndex, Function(int) onItemTapped) {
               ),
             ],
           ),
-          label: 'Recettes',
+          label: 'Produits',
         ),
         NavigationDestination(
           icon: Column(
@@ -318,8 +285,8 @@ ClipRRect navigationBar(int selectedIndex, Function(int) onItemTapped) {
                 padding: const EdgeInsets.only(top: 8.0),
                 child: Image.asset(
                   selectedIndex == 2
-                      ? "assets/navbar/star_active.png"
-                      : "assets/navbar/star_inactive.png",
+                    ? "assets/navbar/star_active.png"
+                    : "assets/navbar/star_inactive.png",
                   width: 20,
                 ),
               ),
@@ -334,6 +301,31 @@ ClipRRect navigationBar(int selectedIndex, Function(int) onItemTapped) {
             ],
           ),
           label: 'Favoris',
+        ),
+        NavigationDestination(
+          icon: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(top: 8.0),
+                child: Image.asset(
+                  selectedIndex == 3
+                    ? "assets/navbar/userprofile_active.png"
+                    : "assets/navbar/userprofile_inactive.png",
+                  width: 20,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                'Profil',
+                style: TextStyle(
+                  color: selectedIndex == 3 ? Colors.white : colors.lightgreyred,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+          label: 'Profil',
         ),
       ],
     ),
