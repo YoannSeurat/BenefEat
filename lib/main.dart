@@ -169,49 +169,6 @@ AppBar appBar() {
   );
 }
 
-void logout(BuildContext context) {
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-      title: const Text('Confirmation'),
-      content: const Text('Es tu sûr de vouloir te déconnecter ?'),
-      actions: [
-        TextButton(
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-          child: const Text('Annuler'),
-        ),
-        TextButton(
-        onPressed: () {
-          // TODO en backend : logout le pelo
-          Navigator.of(context).pop(); 
-          showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return AlertDialog(
-                title: const Text('Tu as bien été déconnecté',),
-                actions: [
-                  TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: const Text('OK'),
-                  ),
-                ],
-              );
-            },
-          );
-        },
-        child: const Text('Se déconnecter'),
-        ),
-      ],
-      );
-    },
-  );
-}
-
 ClipRRect navigationBar(int selectedIndex, Function(int) onItemTapped) {
   return ClipRRect(
     borderRadius: const BorderRadius.only(
