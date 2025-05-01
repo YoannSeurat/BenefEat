@@ -53,6 +53,8 @@ dev_dependencies:
 # The following section is specific to Flutter packages.
 flutter:
   assets:
+    - assets/logos/splashscreen_logo_500_780.png
+    - assets/logos/splashscreen_logo_960.png
     - assets/logos/logo_transparent_blackwhite.svg
     - assets/logos/logo_transparent_blackwhite.png
     - assets/logos/logo_transparent_redblack.svg
@@ -65,7 +67,6 @@ flutter:
     - assets/navbar/userprofile_inactive.png
     - assets/navbar/products_active.png
     - assets/navbar/products_inactive.png
-    - assets/appbar/userprofile_black.png
     - assets/searchbar/search_grey.png
     - assets/backgrounds/splashscreen_background.png
     - assets/backgrounds/loginpage_background.png

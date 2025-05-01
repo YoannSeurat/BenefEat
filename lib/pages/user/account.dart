@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:benefeat/pages/user/login.dart';
+import 'package:benefeat/pages/user/login_or_signup/login_or_create.dart';
 import 'package:benefeat/constants/colors.dart' as colors;
 import 'package:benefeat/constants/constants.dart' as constants;
 
@@ -24,22 +24,7 @@ Container body(BuildContext context) {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          SizedBox(height: constants.APPBAR_HEIGHT + 100,),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            spacing: 15,
-            children: [
-              Image.asset('assets/appbar/userprofile_black.png', width: 30,),
-              Text(
-                "Ton Compte",
-                style: TextStyle(
-                    color: colors.black,
-                    fontSize:30,
-                    fontWeight: FontWeight.w600
-                ),
-              ),
-            ],
-          ),
+          SizedBox(height: constants.APPBAR_HEIGHT + 50,),
           // TODO en backend : faire en sorte de detecter si logged in ou pas
           isNotLoggedIn(context)
         ],
@@ -124,7 +109,10 @@ SizedBox isNotLoggedIn(BuildContext context) {
           ),
           ElevatedButton(
             onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginPage()));
+              Navigator.push(
+                context, 
+                MaterialPageRoute(builder: (context) => const LoginOrCreatePage()),
+              );
             },
             style: ButtonStyle(
               backgroundColor: WidgetStatePropertyAll(colors.red),

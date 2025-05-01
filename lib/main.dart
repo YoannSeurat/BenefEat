@@ -1,15 +1,20 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'package:benefeat/pages/home.dart';
 import 'package:benefeat/pages/favorites.dart';
 import 'package:benefeat/pages/products.dart';
-import 'package:benefeat/pages/user/settings.dart';
 import 'package:benefeat/pages/user/account.dart';
 import 'package:benefeat/constants/colors.dart' as colors;
 import 'package:benefeat/constants/constants.dart' as constants;
 
-void main() => runApp(const MyApp());
+void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+
+  runApp(MyApp());
+}
 
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
@@ -19,6 +24,17 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // pour eviter que certaines images bug quand elles sont load pour la premiere fois
+    precacheImage(AssetImage("assets/navbar/home_inactive.png"), context);
+    precacheImage(AssetImage("assets/navbar/products_active.png"), context);
+    precacheImage(AssetImage("assets/navbar/star_active.png"), context);
+    precacheImage(AssetImage("assets/navbar/userprofile_active.png"), context);
+    precacheImage(AssetImage("assets/backgrounds/loginpage_background.png"), context);
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -62,11 +78,28 @@ class _MainPageState extends State<MainPage> {
       extendBodyBehindAppBar: true,
       appBar: appBar(),
       body: _pages[_selectedIndex],
-      bottomNavigationBar: navigationBar(_selectedIndex, _onItemTapped),
+      bottomNavigationBar: customNavigationBar(_selectedIndex, _onItemTapped),
       backgroundColor: colors.white,
     );
   }
 }
+
+//! Animer la transition entre pages 
+/* body: AnimatedSwitcher(
+  duration: const Duration(milliseconds: 300),
+  switchInCurve: Curves.easeInOut,
+  //switchOutCurve: Curves.easeInOut,
+  transitionBuilder: (Widget child, Animation<double> animation) {
+    return SlideTransition(
+      position: Tween<Offset>(
+        begin: const Offset(0.0, 1.0),
+        end: Offset.zero,
+      ).animate(animation),
+      child: child,
+    );
+  },
+  child: _pages[_selectedIndex],
+), */
 
 AppBar appBar() {
   return AppBar(
@@ -87,89 +120,10 @@ AppBar appBar() {
       width: 70,
     ),
     centerTitle: true,
-
-    /*
-    actions: [ // Profile
-      Builder(
-        builder: (context) {
-          return GestureDetector(
-            onTap: () { // Open dropdown user list
-              showMenu(
-                context: context,
-                position: const RelativeRect.fromLTRB(100, 120, 10, 0),
-                popUpAnimationStyle: AnimationStyle(
-                  curve: Curves.easeInOut,
-                  duration: const Duration(milliseconds: 300),
-                  reverseCurve: Curves.easeInOut,
-                ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15),
-                ),
-                color: colors.whiter,
-
-                items: [
-                  PopupMenuItem(
-                    value: 'account',
-                    child: Row(
-                      children: [
-                        const SizedBox(width: 10),
-                        Image.asset('assets/appbar/userprofile_black.png', width: 25,),
-                        const SizedBox(width: 10),
-                        const Text('Compte'),
-                      ],
-                    ),
-                  ),
-                  PopupMenuItem(
-                    value: 'settings',
-                    child: Row(
-                      children: [
-                        const SizedBox(width: 10),
-                        Icon(Icons.settings, color: colors.black,),
-                        const SizedBox(width: 10),
-                        const Text('Paramètres'),
-                      ],
-                    ),
-                  ),
-                  PopupMenuItem(
-                    value: 'logout',
-                    child: Row(
-                      children: [
-                        const SizedBox(width: 10),
-                        Icon(Icons.logout, color: colors.black),
-                        const SizedBox(width: 10),
-                        const Text('Se Déconnecter'),
-                      ],
-                    ),
-                  ),
-                ],
-              ).then((value) {
-                if (!context.mounted) return;
-                if (value == 'account') {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => const AccountPage()));
-                } else if (value == 'settings') {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => const SettingsPage()));
-                } else if (value == 'logout') {
-                  logout(context);
-                }
-              });
-            },
-            child: Container(
-              margin: const EdgeInsets.only(right: 20, top: 10, bottom: 10),
-              alignment: Alignment.center,
-              child: Image.asset(
-                'assets/appbar/userprofile_black.png',
-                width: 35,
-              ),
-            ),
-          );
-        }
-      )
-    ],
-    */
   );
 }
 
-ClipRRect navigationBar(int selectedIndex, Function(int) onItemTapped) {
+/* ClipRRect navigationBar(int selectedIndex, Function(int) onItemTapped) {
   return ClipRRect(
     borderRadius: const BorderRadius.only(
       topLeft: Radius.circular(30.0),
@@ -194,7 +148,7 @@ ClipRRect navigationBar(int selectedIndex, Function(int) onItemTapped) {
                   selectedIndex == 0
                     ? "assets/navbar/home_active.png"
                     : "assets/navbar/home_inactive.png",
-                  width: 20,
+                  width: constants.NAVBAR_ICON_WIDTH,
                 ),
               ),
               const SizedBox(height: 4),
@@ -219,7 +173,7 @@ ClipRRect navigationBar(int selectedIndex, Function(int) onItemTapped) {
                   selectedIndex == 1
                     ? "assets/navbar/products_active.png"
                     : "assets/navbar/products_inactive.png",
-                  width: 20,
+                  width: constants.NAVBAR_ICON_WIDTH,
                 ),
               ),
               const SizedBox(height: 4),
@@ -244,7 +198,7 @@ ClipRRect navigationBar(int selectedIndex, Function(int) onItemTapped) {
                   selectedIndex == 2
                     ? "assets/navbar/star_active.png"
                     : "assets/navbar/star_inactive.png",
-                  width: 20,
+                  width: constants.NAVBAR_ICON_WIDTH,
                 ),
               ),
               const SizedBox(height: 4),
@@ -269,7 +223,7 @@ ClipRRect navigationBar(int selectedIndex, Function(int) onItemTapped) {
                   selectedIndex == 3
                     ? "assets/navbar/userprofile_active.png"
                     : "assets/navbar/userprofile_inactive.png",
-                  width: 20,
+                  width: constants.NAVBAR_ICON_WIDTH,
                 ),
               ),
               const SizedBox(height: 4),
@@ -286,5 +240,63 @@ ClipRRect navigationBar(int selectedIndex, Function(int) onItemTapped) {
         ),
       ],
     ),
+  );
+} */
+
+
+Widget customNavigationBar(int selectedIndex, Function(int) onItemTapped) {
+  return ClipRRect(
+    borderRadius: const BorderRadius.only(
+      topLeft: Radius.circular(30.0),
+      topRight: Radius.circular(30.0),
+    ),
+    child: Container(
+      color: colors.darkred,
+      height: constants.NAVBAR_HEIGHT,
+      //padding: const EdgeInsets.symmetric(vertical: 10),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          navItem(0, selectedIndex, onItemTapped, "Accueil", "home"),
+          navItem(1, selectedIndex, onItemTapped, "Produits", "products"),
+          navItem(2, selectedIndex, onItemTapped, "Favoris", "star"),
+          navItem(3, selectedIndex, onItemTapped, "Profil", "userprofile"),
+        ],
+      ),
+    ),
+  );
+}
+
+Widget navItem(int index, int selectedIndex, Function(int) onItemTapped, String label, String assetName) {
+  final isSelected = selectedIndex == index;
+  return GestureDetector(
+    onTap: () => onItemTapped(index),
+    child: Container(
+      padding: EdgeInsets.all(15),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
+        spacing: 10,
+        children: [
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            curve: Curves.easeOut,
+            width: constants.NAVBAR_ICON_WIDTH + (isSelected ? 5 : 0),
+            child: Image.asset(
+              isSelected
+                  ? "assets/navbar/${assetName}_active.png"
+                  : "assets/navbar/${assetName}_inactive.png",
+            ),
+          ),
+          Text(
+            label,
+            style: TextStyle(
+              color: isSelected ? Colors.white : colors.lightgreyred,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
+      ),
+    )
   );
 }

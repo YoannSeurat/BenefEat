@@ -24,13 +24,6 @@ Container body() {
         spacing: 20,
         children: [
           SizedBox(height: constants.APPBAR_HEIGHT + 100,),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text("Benef", style: TextStyle(color: colors.black, fontSize: 30, fontWeight: FontWeight.w600)),
-              Text("Eat", style: TextStyle(color: colors.red, fontSize: 30, fontWeight: FontWeight.w600)),
-            ],
-          ),
         ],
       ),
     ),
