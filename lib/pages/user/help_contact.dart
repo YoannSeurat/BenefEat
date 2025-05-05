@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:benefeat/constants/colors.dart' as colors;
 import 'package:benefeat/constants/constants.dart' as constants;
 
-class HomePage extends StatelessWidget {
-  const HomePage({super.key});
+class HelpAndContactPage extends StatelessWidget {
+  const HelpAndContactPage(String userName, String email, String password, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -15,15 +15,11 @@ class HomePage extends StatelessWidget {
 }
 
 Container body() {
-  //// ignore: avoid_unnecessary_containers
   return Container(
     child: SingleChildScrollView(
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        spacing: 20,
         children: [
-          SizedBox(height: constants.APPBAR_HEIGHT + 100,),
+          
         ],
       ),
     ),

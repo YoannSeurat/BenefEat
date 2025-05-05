@@ -35,17 +35,18 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
   flutter_native_splash: ^2.4.6
-
+  image_picker: ^0.8.7+4
+  
 dev_dependencies:
   flutter_test:
     sdk: flutter
-
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^5.0.0
+  flutter_launcher_icons: ^0.14.3
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -53,18 +54,23 @@ dev_dependencies:
 # The following section is specific to Flutter packages.
 flutter:
   assets:
+    - assets/account/icon_edit_white.png
+    - assets/account/icon_edit_black.png
+    - assets/account/user_defaultpfp.png
+    - assets/logos/splashscreen_logo_500_780.png
+    - assets/logos/splashscreen_logo_960.png
     - assets/logos/logo_transparent_blackwhite.svg
     - assets/logos/logo_transparent_blackwhite.png
     - assets/logos/logo_transparent_redblack.svg
     - assets/logos/logo_transparent_redblack.png
     - assets/navbar/home_active.png
     - assets/navbar/home_inactive.png
-    - assets/navbar/recipes_active.png
-    - assets/navbar/recipes_inactive.png
     - assets/navbar/star_active.png
     - assets/navbar/star_inactive.png
-    - assets/appbar/userprofile_black.png
-    - assets/appbar/hamburger_black.png
+    - assets/navbar/userprofile_active.png
+    - assets/navbar/userprofile_inactive.png
+    - assets/navbar/products_active.png
+    - assets/navbar/products_inactive.png
     - assets/searchbar/search_grey.png
     - assets/backgrounds/splashscreen_background.png
     - assets/backgrounds/loginpage_background.png
@@ -113,3 +119,8 @@ flutter_native_splash:
   android_12:
     color: "#eaeaea"
     image: "assets/logos/splashscreen_logo_960.png"
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/logos/logo_transparent_redblack_square.png"

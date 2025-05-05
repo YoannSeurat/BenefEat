@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-import 'dart:ui';
 
+import 'package:benefeat/pages/user/login_or_signup/login.dart';
+import 'package:benefeat/pages/user/login_or_signup/signup.dart';
 import 'package:benefeat/constants/colors.dart' as colors;
 import 'package:benefeat/constants/constants.dart' as constants;
 
-class LoginPage extends StatelessWidget {
-  const LoginPage({super.key});
+class LoginOrCreatePage extends StatelessWidget {
+  const LoginOrCreatePage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -16,16 +17,16 @@ class LoginPage extends StatelessWidget {
       appBar: appBar(),
       body: Stack(
         children: [
-          // Background image
+          // Background
           Positioned.fill(
             child: Image.asset(
               "assets/backgrounds/loginpage_background.png",
-              fit: BoxFit.cover, // Ensures the image covers the entire screen
+              fit: BoxFit.cover,
             ),
           ),
           // Foreground
           SafeArea(
-            child: body(),
+            child: body(context),
           ),
         ],
       ),
@@ -51,8 +52,9 @@ AppBar appBar() {
   );
 }
 
-Container body() {
+Container body(BuildContext context) {
   return Container(
+    padding: EdgeInsets.only(bottom: 50),
     child: Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -119,8 +121,17 @@ Container body() {
               ),
             ),
             onPressed: () {
-              // go to log in
-            }, 
+              Navigator.push(
+                context,
+                PageRouteBuilder(
+                  pageBuilder: (context, animation, secondaryAnimation) => LoginPage(),
+                  transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                    return slidetransition(context, animation, secondaryAnimation, child);
+                  },
+                  transitionDuration: const Duration(milliseconds: 400),
+                ),
+              );
+            },
             child: Text(
               "Se connecter",
               style: TextStyle(
@@ -163,7 +174,16 @@ Container body() {
               ),
             ),
             onPressed: () {
-              // go to sign up
+              Navigator.push(
+                context,
+                PageRouteBuilder(
+                  pageBuilder: (context, animation, secondaryAnimation) => SignUpPage(),
+                  transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                    return slidetransition(context, animation, secondaryAnimation, child);
+                  },
+                  transitionDuration: const Duration(milliseconds: 500),
+                ),
+              );
             }, 
             child: Text(
               "Créer un compte",
@@ -176,5 +196,15 @@ Container body() {
         ],
       ),
     ),
+  );
+}
+
+Widget slidetransition(context, animation, secondaryAnimation, child){
+  return SlideTransition(
+    position: animation.drive(Tween(
+      begin: Offset(0.0, 1.0), 
+      end: Offset.zero
+    ).chain(CurveTween(curve: Curves.easeOutQuad))),
+    child: child,
   );
 }
