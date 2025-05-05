@@ -35,6 +35,7 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
   flutter_native_splash: ^2.4.6
+  image_picker: ^0.8.7+4
   
 dev_dependencies:
   flutter_test:
@@ -53,6 +54,9 @@ dev_dependencies:
 # The following section is specific to Flutter packages.
 flutter:
   assets:
+    - assets/account/icon_edit_white.png
+    - assets/account/icon_edit_black.png
+    - assets/account/user_defaultpfp.png
     - assets/logos/splashscreen_logo_500_780.png
     - assets/logos/splashscreen_logo_960.png
     - assets/logos/logo_transparent_blackwhite.svg

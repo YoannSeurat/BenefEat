@@ -11,10 +11,10 @@ class SignUpPage extends StatefulWidget {
 }
 
 class _SignUpPageState extends State<SignUpPage> {
-  final TextEditingController passwordController = TextEditingController();
-  final TextEditingController confirmPasswordController = TextEditingController();
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  final TextEditingController confirmPasswordController = TextEditingController();
 
   String passwordsConfirmationMessage = "";
 
@@ -31,7 +31,17 @@ class _SignUpPageState extends State<SignUpPage> {
       extendBody: true,
       backgroundColor: colors.white,
       appBar: appBar(),
-      body: body(context, usernameController, emailController, passwordController, confirmPasswordController, passwordsConfirmationMessage, passwordsDoNotMatch),
+      body: body(
+        context, 
+        
+        usernameController, 
+        emailController, 
+        passwordController, 
+        confirmPasswordController, 
+        
+        passwordsConfirmationMessage, 
+        passwordsDoNotMatch
+      ),
     );
   }
 }
@@ -51,10 +61,12 @@ AppBar appBar() {
 
 Widget body(
   BuildContext context,
+
   TextEditingController usernameController,
   TextEditingController emailController,
   TextEditingController passwordController,
   TextEditingController confirmPasswordController,
+
   String passwordsConfirmationMessage,
   Function(String) onPasswordChange,
 ) {
@@ -64,7 +76,7 @@ Widget body(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.start,
-        spacing: 15,
+        spacing: 20,
         children: [
           Image.asset("assets/logos/logo_transparent_redblack.png", width: 100),
           Text(
@@ -76,26 +88,30 @@ Widget body(
             ),
           ),
 
-          const SizedBox(height: 10,),
+          const SizedBox(height: 5,),
 
           TextField(
             controller: usernameController,
+            textInputAction: TextInputAction.next,
             decoration: InputDecoration(
-              labelText: "Nom d'utilisateur",
-              border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
+              labelText: "Nom d'utilisateur".toUpperCase(),
+              labelStyle: TextStyle(
+                fontSize: 14,
               ),
+              isDense: true,
             ),
             onTapOutside: (event) => FocusScope.of(context).unfocus(),
           ),
 
           TextField(
             controller: emailController,
+            textInputAction: TextInputAction.next,
             decoration: InputDecoration(
-              labelText: "Email",
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
+              labelText: "Email".toUpperCase(),
+              labelStyle: TextStyle(
+                fontSize: 14,
               ),
+              isDense: true,
             ),
             keyboardType: TextInputType.emailAddress,
             onTapOutside: (event) => FocusScope.of(context).unfocus(),
@@ -103,60 +119,52 @@ Widget body(
 
           TextField(
             controller: passwordController,
-            decoration: InputDecoration(
-              labelText: "Mot de passe",
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-            ),
+            textInputAction: TextInputAction.next,
             obscureText: true,
-            onTapOutside: (event) {
-              FocusScope.of(context).unfocus();
-              if (confirmPasswordController.text.isNotEmpty && passwordController.text != confirmPasswordController.text) {
-                onPasswordChange("Les mots de passe ne sont pas les mêmes");
-              } else {
-                onPasswordChange("");
-              }
-            } 
+            decoration: InputDecoration(
+              labelText: "Mot de passe".toUpperCase(),
+              labelStyle: TextStyle(
+                fontSize: 14,
+              ),
+              isDense: true,
+            ),
+            onTapOutside: (event) => FocusScope.of(context).unfocus(),
+            onChanged: (event) => displayIfValidPassword(passwordController.text, confirmPasswordController.text, onPasswordChange),
           ),
 
           TextField(
             controller: confirmPasswordController,
-            decoration: InputDecoration(
-              labelText: "Confirmer le mot de passe",
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-            ),
+            textInputAction: TextInputAction.done,
             obscureText: true,
-            onTapOutside: (event) {
-              FocusScope.of(context).unfocus();
-              if (passwordController.text != confirmPasswordController.text) {
-                onPasswordChange("Les mots de passe ne sont pas les mêmes");
-              } else {
-                onPasswordChange("");
-              }
-            } 
+            decoration: InputDecoration(
+              labelText: "Confirmer le mot de passe".toUpperCase(),
+              labelStyle: TextStyle(
+                fontSize: 14,
+              ),
+              isDense: true,
+            ),
+            onTapOutside: (event) => FocusScope.of(context).unfocus(),
+            onChanged: (event) => displayIfValidPassword(passwordController.text, confirmPasswordController.text, onPasswordChange),
           ),
 
           Row(
             children: [
               passwordsConfirmationMessage == ""
-              ? confirmPasswordController.text.isEmpty
-                ? SizedBox()
-                : Row(
-                    children: [
-                      SizedBox(width: 20,),
-                      Icon(
-                        Icons.check_circle_outline, 
-                        color: colors.green,
-                      )
-                    ],
-                  )
-              : Icon(
-                  Icons.warning_amber_rounded, 
-                  color: colors.red,
-                ),
+                ? confirmPasswordController.text.isEmpty
+                  ? SizedBox()
+                  : Row(
+                      children: [
+                        SizedBox(width: 10,),
+                        Icon(
+                          Icons.check_circle_outline, 
+                          color: colors.green,
+                        )
+                      ],
+                    )
+                : Icon(
+                    Icons.warning_amber_rounded, 
+                    color: colors.red,
+                  ),
 
               Expanded(
                 child: Text(
@@ -172,7 +180,7 @@ Widget body(
             ],
           ),
 
-          const SizedBox(height: 10,),
+          const SizedBox(height: 5,),
 
           Align(
             alignment: Alignment.topRight,
@@ -200,41 +208,33 @@ Widget body(
               ),
 
               onPressed: () {
-                if (usernameController.text.isEmpty || emailController.text.isEmpty) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(
-                        usernameController.text.isEmpty
-                          ? "Le nom d'utilisateur est requis."
-                          : "L'email est requis.",
-                      ),
-                      backgroundColor: colors.red,
-                    ),
-                  );
-                } else if (passwordsConfirmationMessage == "" && confirmPasswordController.text.isEmpty) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text("Le mot de passe est requis."),
-                      backgroundColor: colors.red,
-                    ),
-                  );
-                } else if (passwordController.text != confirmPasswordController.text) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text("Les mots de passe ne sont pas les mêmes."),
-                      backgroundColor: colors.red,
-                    ),
-                  );
-                } else {
+                if (isValidTextFields(context, passwordsConfirmationMessage, usernameController.text, emailController.text, passwordController.text, confirmPasswordController.text)) {
+                  bool successfulAccountCreation = true; // a implementer quand le backend marchera
+
                   // TODO: Add backend logic
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text("Compte créé avec succès !"),
-                      backgroundColor: colors.green,
-                    ),
-                  );
-                  Navigator.pop(context);
-                  Navigator.pop(context);
+                  
+                  if (successfulAccountCreation) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text("Compte créé avec succès !"),
+                        backgroundColor: colors.darkgreen,
+                        behavior: SnackBarBehavior.floating,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+                      ),
+                    );
+                    Navigator.pop(context);
+                    Navigator.pop(context);
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text("Désolé, un problème est survenu lors de la création de votre compte. \nVeuillez réessayer ultérieurement"),
+                        backgroundColor: colors.red,
+                        behavior: SnackBarBehavior.floating,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+                        duration: const Duration(seconds: 5),
+                      ),
+                    );
+                  }
                 }
               },
             ),
@@ -243,4 +243,50 @@ Widget body(
       ),
     ),
   );
+}
+
+
+
+bool isValidTextFields(BuildContext context, String passwordsConfirmationMessage, String username, String email, String password, String confirmPassword) {
+  String text;
+  if (username.isEmpty) {
+    text = "Le nom d'utilisateur est requis.";
+  } else if (email.isEmpty) {
+    text = "L'email est requis.";
+  } else if (!isValidEmailFormat(email)) {
+    text = "L'email doit etre de la forme exemple@mail.com";
+  } else if (passwordsConfirmationMessage == "" && confirmPassword.isEmpty) {
+    text = "Le mot de passe est requis.";
+  } else if (password != confirmPassword) {
+    text = "Les mots de passe ne sont pas les mêmes.";
+  } else {
+    return true;
+  }
+
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      content: Text(text),
+      backgroundColor: colors.red,
+      behavior: SnackBarBehavior.floating,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+    ),
+  );
+  return false;
+}
+
+
+
+bool isValidEmailFormat(String email) {
+  final emailRegex = RegExp(r'^[a-zA-Z0-9]+@[a-zA-Z]+\.[a-zA-Z]+$');
+  return emailRegex.hasMatch(email);
+}
+
+
+
+void displayIfValidPassword(String password, String confirmPassword, Function onPasswordChange) {
+  if (password != confirmPassword) {
+    onPasswordChange("Les mots de passe ne sont pas les mêmes");
+  } else {
+    onPasswordChange("");
+  }
 }

@@ -124,7 +124,7 @@ Container body(BuildContext context) {
               Navigator.push(
                 context,
                 PageRouteBuilder(
-                  pageBuilder: (context, animation, secondaryAnimation) => const LoginPage(),
+                  pageBuilder: (context, animation, secondaryAnimation) => LoginPage(),
                   transitionsBuilder: (context, animation, secondaryAnimation, child) {
                     return slidetransition(context, animation, secondaryAnimation, child);
                   },
