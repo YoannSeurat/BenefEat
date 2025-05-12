@@ -1,179 +1,51 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:benefeat/constants/colors.dart' as colors;
 import 'package:benefeat/constants/constants.dart' as constants;
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
+  final String address = "10 Place de la Bourse, Bordeaux, France";
+
+  Future<void> _openGoogleMaps() async {
+    final query = Uri.encodeComponent(address);
+    final googleMapsUrl = "https://www.google.com/maps/search/?api=1&query=$query";
+
+    if (await canLaunch(googleMapsUrl)) {
+      await launch(googleMapsUrl);
+    } else {
+      throw "Impossible d'ouvrir Google Maps";
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: colors.white,
-      body: body(),
+      body: body(_openGoogleMaps),
     );
   }
 }
 
-Container body() {
-  //// ignore: avoid_unnecessary_containers
+Container body(Function openMaps) {
   return Container(
-    child: SingleChildScrollView(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        spacing: 20,
-        children: [
-          SizedBox(height: constants.APPBAR_HEIGHT + 50,),
-          Row(
+    child: Column(
+      children: [
+        Expanded(
+          child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text("Benef", style: TextStyle(color: colors.black, fontSize: 30, fontWeight: FontWeight.w600)),
-              Text("Eat", style: TextStyle(color: colors.red, fontSize: 30, fontWeight: FontWeight.w600)),
+              Text("BenefEat"),
+              SizedBox(height: 20), // Ajoute un espace avant le bouton
+              ElevatedButton(
+                onPressed: () => openMaps(),
+                child: Text("Ouvrir Google Maps"),
+              ),
             ],
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text("Benef", style: TextStyle(color: colors.black, fontSize: 30, fontWeight: FontWeight.w600)),
-              Text("Eat", style: TextStyle(color: colors.red, fontSize: 30, fontWeight: FontWeight.w600)),
-            ],
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text("Benef", style: TextStyle(color: colors.black, fontSize: 30, fontWeight: FontWeight.w600)),
-              Text("Eat", style: TextStyle(color: colors.red, fontSize: 30, fontWeight: FontWeight.w600)),
-            ],
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text("Benef", style: TextStyle(color: colors.black, fontSize: 30, fontWeight: FontWeight.w600)),
-              Text("Eat", style: TextStyle(color: colors.red, fontSize: 30, fontWeight: FontWeight.w600)),
-            ],
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text("Benef", style: TextStyle(color: colors.black, fontSize: 30, fontWeight: FontWeight.w600)),
-              Text("Eat", style: TextStyle(color: colors.red, fontSize: 30, fontWeight: FontWeight.w600)),
-            ],
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text("Benef", style: TextStyle(color: colors.black, fontSize: 30, fontWeight: FontWeight.w600)),
-              Text("Eat", style: TextStyle(color: colors.red, fontSize: 30, fontWeight: FontWeight.w600)),
-            ],
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text("Benef", style: TextStyle(color: colors.black, fontSize: 30, fontWeight: FontWeight.w600)),
-              Text("Eat", style: TextStyle(color: colors.red, fontSize: 30, fontWeight: FontWeight.w600)),
-            ],
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text("Benef", style: TextStyle(color: colors.black, fontSize: 30, fontWeight: FontWeight.w600)),
-              Text("Eat", style: TextStyle(color: colors.red, fontSize: 30, fontWeight: FontWeight.w600)),
-            ],
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text("Benef", style: TextStyle(color: colors.black, fontSize: 30, fontWeight: FontWeight.w600)),
-              Text("Eat", style: TextStyle(color: colors.red, fontSize: 30, fontWeight: FontWeight.w600)),
-            ],
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text("Benef", style: TextStyle(color: colors.black, fontSize: 30, fontWeight: FontWeight.w600)),
-              Text("Eat", style: TextStyle(color: colors.red, fontSize: 30, fontWeight: FontWeight.w600)),
-            ],
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text("Benef", style: TextStyle(color: colors.black, fontSize: 30, fontWeight: FontWeight.w600)),
-              Text("Eat", style: TextStyle(color: colors.red, fontSize: 30, fontWeight: FontWeight.w600)),
-            ],
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text("Benef", style: TextStyle(color: colors.black, fontSize: 30, fontWeight: FontWeight.w600)),
-              Text("Eat", style: TextStyle(color: colors.red, fontSize: 30, fontWeight: FontWeight.w600)),
-            ],
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text("Benef", style: TextStyle(color: colors.black, fontSize: 30, fontWeight: FontWeight.w600)),
-              Text("Eat", style: TextStyle(color: colors.red, fontSize: 30, fontWeight: FontWeight.w600)),
-            ],
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text("Benef", style: TextStyle(color: colors.black, fontSize: 30, fontWeight: FontWeight.w600)),
-              Text("Eat", style: TextStyle(color: colors.red, fontSize: 30, fontWeight: FontWeight.w600)),
-            ],
-          ),
-
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text("Benef", style: TextStyle(color: colors.black, fontSize: 30, fontWeight: FontWeight.w600)),
-              Text("Eat", style: TextStyle(color: colors.red, fontSize: 30, fontWeight: FontWeight.w600)),
-            ],
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text("Benef", style: TextStyle(color: colors.black, fontSize: 30, fontWeight: FontWeight.w600)),
-              Text("Eat", style: TextStyle(color: colors.red, fontSize: 30, fontWeight: FontWeight.w600)),
-            ],
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text("Benef", style: TextStyle(color: colors.black, fontSize: 30, fontWeight: FontWeight.w600)),
-              Text("Eat", style: TextStyle(color: colors.red, fontSize: 30, fontWeight: FontWeight.w600)),
-            ],
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text("Benef", style: TextStyle(color: colors.black, fontSize: 30, fontWeight: FontWeight.w600)),
-              Text("Eat", style: TextStyle(color: colors.red, fontSize: 30, fontWeight: FontWeight.w600)),
-            ],
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text("Benef", style: TextStyle(color: colors.black, fontSize: 30, fontWeight: FontWeight.w600)),
-              Text("Eat", style: TextStyle(color: colors.red, fontSize: 30, fontWeight: FontWeight.w600)),
-            ],
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text("Benef", style: TextStyle(color: colors.black, fontSize: 30, fontWeight: FontWeight.w600)),
-              Text("Eat", style: TextStyle(color: colors.red, fontSize: 30, fontWeight: FontWeight.w600)),
-            ],
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text("Benef", style: TextStyle(color: colors.black, fontSize: 30, fontWeight: FontWeight.w600)),
-              Text("Eat", style: TextStyle(color: colors.red, fontSize: 30, fontWeight: FontWeight.w600)),
-            ],
-          ),
-        ],
-      ),
+        ),
+      ],
     ),
   );
 }
