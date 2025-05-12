@@ -17,20 +17,37 @@ class HomePage extends StatelessWidget {
 Container body() {
   //// ignore: avoid_unnecessary_containers
   return Container(
+    padding: const EdgeInsets.symmetric(horizontal: 20),
     child: SingleChildScrollView(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
-        spacing: 20,
         children: [
-          SizedBox(height: constants.APPBAR_HEIGHT + 100,),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text("Benef", style: TextStyle(color: colors.black, fontSize: 30, fontWeight: FontWeight.w600)),
-              Text("Eat", style: TextStyle(color: colors.red, fontSize: 30, fontWeight: FontWeight.w600)),
-            ],
+          SizedBox(height: constants.APPBAR_HEIGHT + 100),
+
+          // 🔍 Barre de recherche
+
+
+          TextField(
+            decoration: InputDecoration(
+              hintText: 'Rechercher...',
+              prefixIcon: Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Image.asset(
+                  'assets/searchbar/search_grey.png',
+                  width: 20,
+                  height: 20,
+                ),
+              ),
+              filled: true,
+              fillColor: Colors.grey[200],
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide.none,
+              ),
+            ),
           ),
+
         ],
       ),
     ),
