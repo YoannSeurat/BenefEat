@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:benefeat/constants/colors.dart' as colors;
 import 'package:benefeat/constants/constants.dart' as constants;
@@ -10,50 +9,19 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: colors.white,
-      body: const HomeContent(),
+      body: body(),
     );
   }
 }
 
-class HomeContent extends StatefulWidget {
-  const HomeContent({super.key});
-
-  @override
-  State<HomeContent> createState() => _HomeContentState();
-}
-
-class _HomeContentState extends State<HomeContent> {
-  final FocusNode _focusNode = FocusNode();
-  final TextEditingController _controller = TextEditingController();
-  bool _isFocused = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _focusNode.addListener(() {
-      setState(() {
-        _isFocused = _focusNode.hasFocus;
-      });
-    });
-  }
-
-  @override
-  void dispose() {
-    _focusNode.dispose();
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      behavior: HitTestBehavior.translucent,
-      onTap: () {
-        if (_isFocused) {
-          _focusNode.unfocus(); // Enlève le focus et donc retire le flou
-        }
-      },
-      child: Stack(
+Container body() {
+  //// ignore: avoid_unnecessary_containers
+  return Container(
+    child: SingleChildScrollView(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        spacing: 20,
         children: [
           SizedBox(height: constants.APPBAR_HEIGHT + 100,),
         ],
