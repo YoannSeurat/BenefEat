@@ -9,19 +9,26 @@ class HelpAndContactPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: colors.white,
-      appBar: AppBar(
-        backgroundColor: colors.white,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () {
-            Navigator.pop(context); // Revenir à la page précédente
-          },
-        ),
-      ),
+      appBar: appBar(),
       body: body(),
     );
   }
+}
+
+AppBar appBar() {
+  return AppBar(
+    backgroundColor: colors.white.withAlpha(50),
+    toolbarHeight: constants.APPBAR_HEIGHT,
+    flexibleSpace: ClipRRect(
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+        child: Container(color: Colors.transparent),
+      ),
+    ),
+    elevation: 0,
+    title: Image.asset('assets/logos/logo_transparent_redblack.png', width: 70),
+    centerTitle: true,
+  );
 }
 
 Container body() {
@@ -29,7 +36,7 @@ Container body() {
     height: double.infinity,
     alignment: Alignment.center,
     child: const Text(
-      "Besoin d'aide ? Contactez-nous à tout moment.\nbenefeat@gmail.com",
+      "Besoin d'aide ? Contactez-nous à tout moment.\nbenefeatefrei@gmail.com",
       textAlign: TextAlign.center,
       style: TextStyle(
         fontSize: 18,
