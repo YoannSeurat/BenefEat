@@ -280,7 +280,8 @@ Widget body(
                   Returns:
                     O: write error
                     1: success
-                    2: user already exists
+                    2: username already exists
+                    3: email already exists
                   */
 
                   String message;
@@ -295,6 +296,9 @@ Widget body(
                       break;
                     case 2:
                       message = "Un autre utilisateur possède déja ce nom d'utilisateur";
+                      break;
+                    case 3:
+                      message = "Un autre utilisateur possède déja cet email";
                       break;
                     default:
                       message = "Erreur";

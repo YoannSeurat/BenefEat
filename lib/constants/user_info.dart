@@ -58,10 +58,18 @@ Future<int> writeUserInfo(List<dynamic> data) async {
 }
 
 Future<int> addUser(String username, String email, String password, String adress) async {
+  /* 
+  Returns:
+    O: write error
+    1: success
+    2: username already exists
+    3: email already exists
+  */
   final newUserInfo = await getUserInfo();
   // checks if user doesnt already exist
   for (var user in newUserInfo) {
     if (user['username'] == username) return 2;
+    if (user['email'] == email) return 3;
     user['connected'] = false; // disconnect users
   }
   newUserInfo.add(
@@ -87,13 +95,24 @@ Future<int> removeUser(String username) async {
 }
 
 Future<int> modifySpecificUserInfo(String label, String value) async {
+  /* 
+  Returns:
+    O: write error
+    1: success
+    2: username or email already exists
+  */
   final newUserInfo = await getUserInfo();
   final connectedIndex = await getConnectedUser();
   if (connectedIndex == -1) {
     return 0;
   }
+  // checks if user info doesnt already exist
+  if (label == "username" || label == "email") {
+    for (var user in newUserInfo) {
+      if (user[label] == value) return 2;
+    }
+  }
   newUserInfo[connectedIndex][label] = value;
-  newUserInfo[connectedIndex].remove("Nom d'utilisateur");
   return await writeUserInfo(newUserInfo);
 }
 

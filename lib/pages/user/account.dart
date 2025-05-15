@@ -81,7 +81,7 @@ class _AccountPageState extends State<AccountPage> {
             SizedBox(height: constants.APPBAR_HEIGHT + 50),
             _isLoggedIn
                 ? loggedInPage(context, userName, _setLoggedIn, _loadUserInfo)
-                : loggedOutPage(context, _setLoggedIn),
+                : loggedOutPage(context, _setLoggedIn, _loadUserInfo),
           ],
         ),
       ),
@@ -221,7 +221,7 @@ Future<void> logout(BuildContext context, setLoggedIn) async {
     context: context,
     builder: (context) => AlertDialog(
       title: const Text('Confirmation'),
-      content: const Text('Es tu sûr(e) de vouloir te déconnecter ?'),
+      content: const Text('Êtes vous sûr(e) de vouloir vous déconnecter ?'),
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(false),
@@ -240,7 +240,7 @@ Future<void> logout(BuildContext context, setLoggedIn) async {
     await showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Tu as bien été déconnecté(e)'),
+        title: const Text('Vous avez bien été déconnecté(e)'),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
@@ -287,8 +287,6 @@ Widget buttonGoToPage(context, String nomPage, Widget page, Function loadUserInf
           transitionDuration: const Duration(milliseconds: 400),
         ),
       ).then( (_) async {
-        final userInfo = await userinfo.getUserInfo();
-        print(userInfo);
         loadUserInfo();
       });
     },
@@ -296,7 +294,7 @@ Widget buttonGoToPage(context, String nomPage, Widget page, Function loadUserInf
 }
 
 
-SizedBox loggedOutPage(BuildContext context, Function setLoggedIn) {
+SizedBox loggedOutPage(BuildContext context, Function setLoggedIn, Function loadUserInfo) {
   return SizedBox(
     height: MediaQuery.of(context).size.height - constants.APPBAR_HEIGHT - 250,
     child: Center(
@@ -315,7 +313,7 @@ SizedBox loggedOutPage(BuildContext context, Function setLoggedIn) {
                 children: [
                   Icon(Icons.warning_amber_rounded, color: colors.red,),
                   Text(
-                    "Tu n'es pas connecté(e)", 
+                    "Vous n'êtes pas connecté(e)", 
                     style: TextStyle(
                       color: colors.red,
                       fontSize: 20,
@@ -348,7 +346,7 @@ SizedBox loggedOutPage(BuildContext context, Function setLoggedIn) {
               children: [
                 Icon(Icons.login,),
                 Text(
-                  "Connexion",
+                  "Page de connexion",
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.w600,
@@ -361,12 +359,11 @@ SizedBox loggedOutPage(BuildContext context, Function setLoggedIn) {
                 context, 
                 MaterialPageRoute(builder: (context) => const LoginOrCreatePage()),
               ).then( (_) async {
-                final userInfo = await userinfo.getUserInfo();
-                print(userInfo);
                 final connectedIndex = await userinfo.getConnectedUser();
                 if (connectedIndex != -1) {
                   await setLoggedIn(true);
                 }
+                await loadUserInfo();
               });
             },
           ),
