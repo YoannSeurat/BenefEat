@@ -3,7 +3,7 @@ import 'package:benefeat/constants/colors.dart' as colors;
 import 'package:benefeat/constants/constants.dart' as constants;
 
 class HelpAndContactPage extends StatelessWidget {
-  const HelpAndContactPage(String userName, String email, String password, {super.key});
+  const HelpAndContactPage({super.key});
 
   @override
   Widget build(BuildContext context) {

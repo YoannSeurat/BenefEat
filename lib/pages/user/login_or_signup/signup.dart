@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:benefeat/constants/colors.dart' as colors;
 import 'package:benefeat/constants/constants.dart' as constants;
+import 'package:benefeat/constants/user_info.dart' as userinfo;
 
 class SignUpPage extends StatefulWidget {
   SignUpPage({super.key});
@@ -15,6 +16,9 @@ class _SignUpPageState extends State<SignUpPage> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmPasswordController = TextEditingController();
+  final TextEditingController streetNameController = TextEditingController();
+  final TextEditingController zipCodeController = TextEditingController();
+  final TextEditingController cityNameController = TextEditingController();
 
   String passwordsConfirmationMessage = "";
 
@@ -38,7 +42,11 @@ class _SignUpPageState extends State<SignUpPage> {
         emailController, 
         passwordController, 
         confirmPasswordController, 
-        
+
+        streetNameController,
+        zipCodeController,
+        cityNameController,
+      
         passwordsConfirmationMessage, 
         passwordsDoNotMatch
       ),
@@ -67,6 +75,10 @@ Widget body(
   TextEditingController passwordController,
   TextEditingController confirmPasswordController,
 
+  TextEditingController streetNameController,
+  TextEditingController zipCodeController,
+  TextEditingController cityNameController,
+
   String passwordsConfirmationMessage,
   Function(String) onPasswordChange,
 ) {
@@ -78,6 +90,8 @@ Widget body(
         crossAxisAlignment: CrossAxisAlignment.start,
         spacing: 20,
         children: [
+          SizedBox(height: constants.APPBAR_HEIGHT,),
+
           Image.asset("assets/logos/logo_transparent_redblack.png", width: 100),
           Text(
             "Création de compte",
@@ -134,7 +148,7 @@ Widget body(
 
           TextField(
             controller: confirmPasswordController,
-            textInputAction: TextInputAction.done,
+            textInputAction: TextInputAction.next,
             obscureText: true,
             decoration: InputDecoration(
               labelText: "Confirmer le mot de passe".toUpperCase(),
@@ -180,7 +194,46 @@ Widget body(
             ],
           ),
 
-          const SizedBox(height: 5,),
+          TextField(
+            controller: streetNameController,
+            textInputAction: TextInputAction.next,
+            decoration: InputDecoration(
+              labelText: "Numéro et nom de rue".toUpperCase(),
+              labelStyle: TextStyle(
+                fontSize: 14,
+              ),
+              isDense: true,
+            ),
+            onTapOutside: (event) => FocusScope.of(context).unfocus(),
+          ),
+
+          TextField(
+            controller: zipCodeController,
+            textInputAction: TextInputAction.next,
+            decoration: InputDecoration(
+              labelText: "Code postal".toUpperCase(),
+              labelStyle: TextStyle(
+                fontSize: 14,
+              ),
+              isDense: true,
+            ),
+            onTapOutside: (event) => FocusScope.of(context).unfocus(),
+          ),
+
+          TextField(
+            controller: cityNameController,
+            textInputAction: TextInputAction.done,
+            decoration: InputDecoration(
+              labelText: "Ville".toUpperCase(),
+              labelStyle: TextStyle(
+                fontSize: 14,
+              ),
+              isDense: true,
+            ),
+            onTapOutside: (event) => FocusScope.of(context).unfocus(),
+          ),
+
+          const SizedBox(height: 25,),
 
           Align(
             alignment: Alignment.topRight,
@@ -207,38 +260,65 @@ Widget body(
                 ),
               ),
 
-              onPressed: () {
-                if (isValidTextFields(context, passwordsConfirmationMessage, usernameController.text, emailController.text, passwordController.text, confirmPasswordController.text)) {
-                  bool successfulAccountCreation = true; // a implementer quand le backend marchera
+              onPressed: () async {
+                if (isValidTextFields(
+                  context, 
+                  passwordsConfirmationMessage, 
+                  usernameController.text, 
+                  emailController.text, 
+                  passwordController.text, 
+                  confirmPasswordController.text,
+                  streetNameController.text,
+                  zipCodeController.text,
+                  cityNameController.text
+                  )) {
+                  final adress = "${streetNameController.text}, ${zipCodeController.text} ${cityNameController.text}";
+                  final successfulAccountCreation = await userinfo.addUser(usernameController.text, emailController.text, passwordController.text, adress);
+                  if (!context.mounted) return;
 
-                  // TODO: Add backend logic
-                  
-                  if (successfulAccountCreation) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text("Compte créé avec succès !"),
-                        backgroundColor: colors.darkgreen,
-                        behavior: SnackBarBehavior.floating,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
-                      ),
-                    );
+                  /* 
+                  Returns:
+                    O: write error
+                    1: success
+                    2: user already exists
+                  */
+
+                  String message;
+                  Color bgcolor = colors.red;
+                  switch (successfulAccountCreation) {
+                    case 0:
+                      message = "Une erreur d'écriture s'est produite\nVeuillez réessayer ultérieurement";
+                      break;
+                    case 1:
+                      message = "Compte créé avec succès !";
+                      bgcolor = colors.darkgreen;
+                      break;
+                    case 2:
+                      message = "Un autre utilisateur possède déja ce nom d'utilisateur";
+                      break;
+                    default:
+                      message = "Erreur";
+                  }
+
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(message),
+                      backgroundColor: bgcolor,
+                      behavior: SnackBarBehavior.floating,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+                    ),
+                  );
+
+                  if (successfulAccountCreation == 1) {
                     Navigator.pop(context);
                     Navigator.pop(context);
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text("Désolé, un problème est survenu lors de la création de votre compte. \nVeuillez réessayer ultérieurement"),
-                        backgroundColor: colors.red,
-                        behavior: SnackBarBehavior.floating,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
-                        duration: const Duration(seconds: 5),
-                      ),
-                    );
                   }
                 }
               },
             ),
-          )
+          ),
+
+          SizedBox(height: 15,),
         ],
       ),
     ),
@@ -247,7 +327,7 @@ Widget body(
 
 
 
-bool isValidTextFields(BuildContext context, String passwordsConfirmationMessage, String username, String email, String password, String confirmPassword) {
+bool isValidTextFields(BuildContext context, String passwordsConfirmationMessage, String username, String email, String password, String confirmPassword, String streetName, String zipCode, String cityName) {
   String text;
   if (username.isEmpty) {
     text = "Le nom d'utilisateur est requis.";
@@ -259,6 +339,14 @@ bool isValidTextFields(BuildContext context, String passwordsConfirmationMessage
     text = "Le mot de passe est requis.";
   } else if (password != confirmPassword) {
     text = "Les mots de passe ne sont pas les mêmes.";
+  } else if (streetName.isEmpty) {
+    text = "Le numéro et le nom de rue sont requis";
+  } else if (zipCode.isEmpty) {
+    text = "Le code postal est requis";
+  } else if (!RegExp(r'^\d{5}$').hasMatch(zipCode)) {
+    text = "Le code postal doit contenir 5 chiffres";
+  } else if (cityName.isEmpty) {
+    text = "La ville est requise";
   } else {
     return true;
   }
@@ -277,7 +365,7 @@ bool isValidTextFields(BuildContext context, String passwordsConfirmationMessage
 
 
 bool isValidEmailFormat(String email) {
-  final emailRegex = RegExp(r'^[a-zA-Z0-9]+@[a-zA-Z]+\.[a-zA-Z]+$');
+  final emailRegex = RegExp(r'^[a-zA-Z0-9.]+@[a-zA-Z]+\.[a-zA-Z]+$');
   return emailRegex.hasMatch(email);
 }
 

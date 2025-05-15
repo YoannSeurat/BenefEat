@@ -2,11 +2,18 @@ import 'package:flutter/material.dart';
 
 import 'package:benefeat/constants/colors.dart' as colors;
 import 'package:benefeat/constants/constants.dart' as constants;
+import 'package:benefeat/constants/user_info.dart' as userinfo;
 
-class LoginPage extends StatelessWidget {
-  LoginPage({super.key});
+class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
 
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
   final TextEditingController emailController = TextEditingController();
+
   final TextEditingController passwordController = TextEditingController();
 
   @override
@@ -102,33 +109,51 @@ Widget body(BuildContext context, TextEditingController emailController, TextEdi
                   ),
                 ),
               ),
-              onPressed: () {
+              onPressed: () async {
                 if (isValidTextFields(context, emailController.text, passwordController.text)) {
-                  bool successfulAccountCreation = true; // a implementer quand le backend marchera
+                  final successfulAccountCreation = await userinfo.connectUser(emailController.text, passwordController.text);
+                  if (!context.mounted) return;
 
-                  // TODO: Add backend logic
+                  /*
+                  Returns :
+                    0 : write error
+                    1 : success
+                    2 : email does not exist
+                    3 : password is incorrect
+                  */
+
+                  String message;
+                  Color bgcolor = colors.red;
+                  switch (successfulAccountCreation) {
+                    case 0:
+                      message = "Une erreur d'écriture s'est produite\nVeuillez réessayer ultérieurement";
+                      break;
+                    case 1:
+                      message = "Connexion réussie !";
+                      bgcolor = colors.darkgreen;
+                      break;
+                    case 2:
+                      message = "Votre compte n'existe pas, veuillez en créer un";
+                      break;
+                    case 3:
+                      message = "Votre mot de passe est incorrect";
+                      break;
+                    default:
+                      message = "Erreur";
+                  }
                   
-                  if (successfulAccountCreation) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text("Connexion réussie !"),
-                        backgroundColor: colors.darkgreen,
-                        behavior: SnackBarBehavior.floating,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
-                      ),
-                    );
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(message),
+                      backgroundColor: bgcolor,
+                      behavior: SnackBarBehavior.floating,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+                    ),
+                  );
+
+                  if (successfulAccountCreation == 1) {
                     Navigator.pop(context);
                     Navigator.pop(context);
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text("Désolé, un problème est survenu lors de la connexion à votre compte. \nVeuillez réessayer ultérieurement"),
-                        backgroundColor: colors.red,
-                        behavior: SnackBarBehavior.floating,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
-                        duration: const Duration(seconds: 5),
-                      ),
-                    );
                   }
                 }
               },
@@ -173,6 +198,6 @@ bool isValidTextFields(BuildContext context, String email, String password) {
 
 
 bool isValidEmailFormat(String email) {
-  final emailRegex = RegExp(r'^[a-zA-Z0-9]+@[a-zA-Z]+\.[a-zA-Z]+$');
+  final emailRegex = RegExp(r'^[a-zA-Z0-9.]+@[a-zA-Z]+\.[a-zA-Z]+$');
   return emailRegex.hasMatch(email);
 }

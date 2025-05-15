@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:benefeat/constants/colors.dart' as colors;
 import 'package:benefeat/constants/constants.dart' as constants;
+import 'package:benefeat/constants/user_info.dart' as userinfo;
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -24,6 +25,14 @@ Container body() {
         spacing: 20,
         children: [
           SizedBox(height: constants.APPBAR_HEIGHT + 100,),
+          ElevatedButton(
+          onPressed: () async {
+              print(await userinfo.getUserInfo());
+              print(await userinfo.getConnectedUser());
+              print(await userinfo.getSpecificUserInfo("username"));
+            }, 
+            child: Text("")
+          ),
         ],
       ),
     ),

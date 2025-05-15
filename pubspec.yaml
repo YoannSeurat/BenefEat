@@ -36,6 +36,7 @@ dependencies:
   cupertino_icons: ^1.0.8
   flutter_native_splash: ^2.4.6
   image_picker: ^0.8.7+4
+  path_provider: ^2.1.2
   
 dev_dependencies:
   flutter_test:
@@ -54,6 +55,7 @@ dev_dependencies:
 # The following section is specific to Flutter packages.
 flutter:
   assets:
+    - assets/data/userInfo.json
     - assets/account/icon_edit_white.png
     - assets/account/icon_edit_black.png
     - assets/account/user_defaultpfp.png
