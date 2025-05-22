@@ -38,6 +38,9 @@ dependencies:
   image_picker: ^0.8.7+4
   path_provider: ^2.1.2
   url_launcher: ^6.2.5
+  sqflite: ^2.3.3
+  path: ^1.9.1
+  shared_preferences: ^2.2.2
   
 dev_dependencies:
   flutter_test:
@@ -57,6 +60,7 @@ dev_dependencies:
 flutter:
   assets:
     - assets/data/userInfo.json
+    - assets/data/auchan.db
     - assets/account/icon_edit_white.png
     - assets/account/icon_edit_black.png
     - assets/account/user_defaultpfp.png
@@ -74,7 +78,8 @@ flutter:
     - assets/navbar/userprofile_inactive.png
     - assets/navbar/products_active.png
     - assets/navbar/products_inactive.png
-    - assets/searchbar/search_grey.png
+    - assets/other_icons/search_grey.png
+    - assets/other_icons/trash.png
     - assets/backgrounds/splashscreen_background.png
     - assets/backgrounds/loginpage_background.png
     
