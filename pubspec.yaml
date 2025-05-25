@@ -41,6 +41,9 @@ dependencies:
   sqflite: ^2.3.3
   path: ^1.9.1
   shared_preferences: ^2.2.2
+  geocoding: ^2.1.0
+  geolocator: ^10.0.0
+  
   
 dev_dependencies:
   flutter_test:
@@ -70,6 +73,9 @@ flutter:
     - assets/logos/logo_transparent_blackwhite.png
     - assets/logos/logo_transparent_redblack.svg
     - assets/logos/logo_transparent_redblack.png
+    - assets/logos/Lidl.png
+    - assets/logos/Monoprix.png
+    - assets/logos/products_image.png
     - assets/navbar/home_active.png
     - assets/navbar/home_inactive.png
     - assets/navbar/star_active.png
@@ -80,6 +86,9 @@ flutter:
     - assets/navbar/products_inactive.png
     - assets/other_icons/search_grey.png
     - assets/other_icons/trash.png
+    - assets/other_icons/trash_white.png
+    - assets/other_icons/star_fav.png
+    - assets/other_icons/star_unfav.png
     - assets/backgrounds/splashscreen_background.png
     - assets/backgrounds/loginpage_background.png
     

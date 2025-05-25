@@ -106,12 +106,31 @@ Future<int> modifySpecificUserInfo(String label, String value) async {
   if (connectedIndex == -1) {
     return 0;
   }
+  
   // checks if user info doesnt already exist
   if (label == "username" || label == "email") {
     for (var user in newUserInfo) {
       if (user[label] == value) return 2;
     }
   }
+
+  // change pfp path name if username is being changed
+  if (label == "username") {
+    final oldUsername = newUserInfo[connectedIndex]['username'];
+    final directory = await getApplicationDocumentsDirectory();
+    final oldPath = '${directory.path}/user_profile_picture_$oldUsername.png';
+    final oldFile = File(oldPath);
+    
+    if (await oldFile.exists()) {
+      try {
+        final newPath = '${directory.path}/user_profile_picture_$value.png';
+        await oldFile.rename(newPath);
+      } catch (e) {
+        print('Error renaming profile picture: $e');
+      }
+    }
+  }
+  
   newUserInfo[connectedIndex][label] = value;
   return await writeUserInfo(newUserInfo);
 }

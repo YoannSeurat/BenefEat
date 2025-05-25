@@ -26,6 +26,7 @@ final Color blue = HexColor("5EAAC9");
 
 final Color grey = HexColor("7D7D7D");
 final Color kindalightgrey = HexColor("DADADA");
+final Color kindakindalightgrey = HexColor("DFDFDF");
 final Color lightgrey = HexColor("E5E5E5");
 
 final Color black = HexColor("323232");

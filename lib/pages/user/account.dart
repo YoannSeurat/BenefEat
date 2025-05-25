@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
+import 'package:path_provider/path_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:benefeat/pages/user/login_or_signup/login_or_create.dart';
 import 'package:benefeat/pages/user/personal_information.dart';
@@ -33,11 +35,16 @@ class _AccountPageState extends State<AccountPage> {
   XFile? userProfilePicture;
 
   Future<void> _pickImage() async {
-    final XFile? image = await _picker.pickImage(source: ImageSource.camera, preferredCameraDevice: CameraDevice.front);
+    final XFile? image = await _picker.pickImage(
+      source: ImageSource.camera,
+      preferredCameraDevice: CameraDevice.front,
+    );
     if (image != null) {
+      final savedPath = await saveProfilePicture(image, userName);
       setState(() {
-        userProfilePicture = image;
+        userProfilePicture = XFile(savedPath); // Update UI immediately
       });
+      await _loadUserInfo();
     }
   }
 
@@ -54,12 +61,17 @@ class _AccountPageState extends State<AccountPage> {
     final password = await userinfo.getSpecificUserInfo("password");
     final adress = await userinfo.getSpecificUserInfo("adress");
 
+    // Directly check for the PFP file
+    final directory = await getApplicationDocumentsDirectory();
+    final pfpPath = '${directory.path}/user_profile_picture_$name.png';
+
     setState(() {
       _isLoggedIn = isLoggedIn;
       userName = name;
       userEmail = email;
       userPassword = password;
       userAdress = adress;
+      userProfilePicture = File(pfpPath).existsSync() ? XFile(pfpPath) : null;
     });
   }
 
@@ -69,6 +81,15 @@ class _AccountPageState extends State<AccountPage> {
       backgroundColor: colors.white,
       body: body(context, userName),
     );
+  }
+
+
+  Future<String> saveProfilePicture(XFile image, String userId) async {
+    final directory = await getApplicationDocumentsDirectory();
+    final String fileName = 'user_profile_picture_$userId.png'; // Consistent extension
+    final String fullPath = '${directory.path}/$fileName';
+    final File newImage = await File(image.path).copy(fullPath);
+    return newImage.path;
   }
 
   Widget body(BuildContext context, String userName) {
@@ -105,15 +126,12 @@ class _AccountPageState extends State<AccountPage> {
                   CircleAvatar(
                     radius: 50,
                     backgroundImage: userProfilePicture != null
-                      ? FileImage(File(userProfilePicture!.path))
-                      : AssetImage("assets/account/user_defaultpfp.png") as ImageProvider,
+                        ? FileImage(File(userProfilePicture!.path))
+                        : AssetImage("assets/account/user_defaultpfp.png") as ImageProvider,
                     child: Container(
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        border: Border.all(
-                          color: colors.darkred,
-                          width: 4.0,
-                        ),
+                        border: Border.all(color: colors.darkred, width: 4.0),
                       ),
                     ),
                   ),
@@ -196,6 +214,7 @@ class _AccountPageState extends State<AccountPage> {
               ],
             ),
             onPressed: () async {
+              printAllProfilePictures();
               await logout(context, setLoggedIn);
             }, 
           ),
@@ -328,10 +347,7 @@ SizedBox loggedOutPage(BuildContext context, Function setLoggedIn, Function load
           ElevatedButton(
             style: ButtonStyle(
               backgroundColor: WidgetStatePropertyAll(colors.red),
-              foregroundColor: WidgetStatePropertyAll(colors.white),
-              padding: WidgetStatePropertyAll(
-                const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-              ),
+              padding: WidgetStatePropertyAll(EdgeInsets.symmetric(horizontal: 30, vertical: 15)),
               shape: WidgetStatePropertyAll(
                 RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20),
@@ -344,12 +360,13 @@ SizedBox loggedOutPage(BuildContext context, Function setLoggedIn, Function load
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Icon(Icons.login,),
+                Icon(Icons.login, color: colors.white,),
                 Text(
                   "Page de connexion",
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.w600,
+                    color: colors.white,
                   ),
                 ),
               ],
@@ -365,10 +382,18 @@ SizedBox loggedOutPage(BuildContext context, Function setLoggedIn, Function load
                 }
                 await loadUserInfo();
               });
-            },
+            }
           ),
         ],
       ),
     )
   );
+}
+
+void printAllProfilePictures() async {
+  final directory = await getApplicationDocumentsDirectory();
+  final files = directory.listSync();
+  for (var file in files) {
+    print('File in app directory: ${file.path}');
+  }
 }

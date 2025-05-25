@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:path/path.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:benefeat/pages/product_class.dart';
@@ -14,6 +13,8 @@ class ProductsPage extends StatefulWidget {
   @override
   State<ProductsPage> createState() => _ProductsPageState();
 }
+
+String favoriteKey(Product product) => '${product.name} __ ${product.quantity}';
 
 class _ProductsPageState extends State<ProductsPage> {
   final FocusNode _searchBarFocusNode = FocusNode();
@@ -64,6 +65,33 @@ class _ProductsPageState extends State<ProductsPage> {
     saveCart();
   }
 
+
+  List<String> _favorites = [];
+
+  Future<void> saveFavorites() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setStringList('favorites', _favorites);
+  }
+
+  Future<void> loadFavorites() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _favorites = prefs.getStringList('favorites') ?? [];
+    });
+  }
+
+  void _toggleFavorite(Product product) {
+    final key = favoriteKey(product);
+    setState(() {
+      if (_favorites.contains(key)) {
+        _favorites.remove(key);
+      } else {
+        _favorites.add(key);
+      }
+    });
+    saveFavorites();
+  }
+
   @override
   void initState() {
     super.initState();
@@ -74,6 +102,7 @@ class _ProductsPageState extends State<ProductsPage> {
     });
     _productsFuture = fetchProducts();
     loadCart();
+    loadFavorites();
   }
 
   @override
@@ -86,14 +115,14 @@ class _ProductsPageState extends State<ProductsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: colors.white,
-      body: body(context, _query, _updateQuery, _isSearchBarFocused, _searchBarFocusNode, _productsFuture, _addToCart),
+      body: body(context, _query, _updateQuery, _isSearchBarFocused, _searchBarFocusNode, _productsFuture, _addToCart, _favorites, _toggleFavorite),
       floatingActionButton: floatingActionButton(context, _cart, _removeFromCart),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
   }
 }
 
-Widget body(BuildContext context, String query, Function updateQuery, bool isSearchBarFocused, FocusNode searchBarFocusNode, Future<List<Product>> productsFuture, Function addToCart) {
+Widget body(BuildContext context, String query, Function updateQuery, bool isSearchBarFocused, FocusNode searchBarFocusNode, Future<List<Product>> productsFuture, Function addToCart, List<String> favorites, Function(Product) toggleFavorite) {
   return Column(
     children: [
       SizedBox(height: constants.APPBAR_HEIGHT + 40),
@@ -133,7 +162,7 @@ Widget body(BuildContext context, String query, Function updateQuery, bool isSea
                 minWidth: 25,
                 minHeight: 25,
               ),
-              hintText: "Store, product, brand, ...",
+              hintText: "Produit, marque, ...",
               hintStyle: TextStyle(
                 color: colors.grey,
                 fontSize: 12,
@@ -180,7 +209,7 @@ Widget body(BuildContext context, String query, Function updateQuery, bool isSea
                   childAspectRatio: .7,
                 ),
                 itemCount: filteredProducts.length,
-                itemBuilder: (context, index) => productWidget(context, filteredProducts[index], addToCart),
+                itemBuilder: (context, index) => productWidget(context, filteredProducts[index], addToCart, favorites, toggleFavorite),
               );
             },
           ),
@@ -249,8 +278,6 @@ void openCartPage(BuildContext context, List<Product> cart, Future<void> Functio
                         return ListTile(
                           leading: Image.asset(
                             "assets/account/user_defaultpfp.png",
-                            width: 60,
-                            height: 60,
                             fit: BoxFit.cover,
                           ),
                           title: Text(
@@ -259,20 +286,17 @@ void openCartPage(BuildContext context, List<Product> cart, Future<void> Functio
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(fontWeight: FontWeight.w600),
                           ),
-                          subtitle: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisSize: MainAxisSize.min,
+                          subtitle: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(
-                                product.brand,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(product.brand, maxLines: 1, overflow: TextOverflow.ellipsis),
+                                  Text(product.quantity, maxLines: 1, overflow: TextOverflow.ellipsis),
+                                ],
                               ),
-                              Text(
-                                product.quantity,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
+                              Text("${product.price} €", maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
                             ],
                           ),
                           trailing: IconButton(
@@ -300,6 +324,7 @@ void openCartPage(BuildContext context, List<Product> cart, Future<void> Functio
                   ),
                 ),
 
+              // Button to view suggestions
               SizedBox(
                 width: double.infinity,
                 height: 48,
@@ -364,41 +389,67 @@ Widget floatingActionButton(BuildContext context, List<Product> cart, Future<voi
 
 
 
-Widget productWidget(BuildContext context, Product product, Function addToCart) {
+Widget productWidget(BuildContext context, Product product, Function addToCart, List<String> favorites, Function(Product) onToggleFavorite) {
   return GestureDetector(
-    child: Container(
-      decoration: BoxDecoration(
-        color: colors.lightgrey,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Padding(
-        padding: EdgeInsets.all(12),
-        child: Column(
-          spacing: 3,
-          children: [
-            Spacer(),
-            Text(
-              product.name,
-              style: TextStyle(fontWeight: FontWeight.w600),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
+    child: Stack(
+      children: [
+        Container(
+          width: MediaQuery.of(context).size.width * 0.5,
+          decoration: BoxDecoration(
+            color: colors.lightgrey,
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Padding(
+            padding: EdgeInsets.all(10),
+            child: Column(
+              children: [
+                Image.asset(
+                  "assets/account/user_defaultpfp.png",
+                  height: 120,
+                  fit: BoxFit.cover
+                ),
+                Spacer(),
+                Text(
+                  product.name,
+                  style: TextStyle(fontWeight: FontWeight.w600),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                Text(product.brand, maxLines: 1, overflow: TextOverflow.ellipsis),
+                Text(product.quantity, maxLines: 1, overflow: TextOverflow.ellipsis),
+                Text(
+                  '${product.price} €',
+                  style: TextStyle(fontWeight: FontWeight.w600),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
             ),
-            Text(product.brand, maxLines: 1, overflow: TextOverflow.ellipsis),
-            Text(product.quantity, maxLines: 1, overflow: TextOverflow.ellipsis),
-            Text(
-              '${product.price} €',
-              style: TextStyle(fontWeight: FontWeight.w600),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ],
+          ),
         ),
-      ),
+
+        // Star icon in top right
+        Positioned(
+          top: 10,
+          right: 10,
+          child: GestureDetector(
+            onTap: () {
+              onToggleFavorite(product);
+            },
+            child: Image.asset(
+              favorites.contains(favoriteKey(product))
+                  ? "assets/other_icons/star_fav.png"
+                  : "assets/other_icons/star_unfav.png",
+              width: 25,
+            ),
+          ),
+        ),
+      ],
     ),
     onTap: () {
       openUpProductInfo(context, product, addToCart);
     },
-  ); 
+  );
 }
 
 void openUpProductInfo(BuildContext context, Product product, Function addToCart) {
@@ -416,7 +467,7 @@ void openUpProductInfo(BuildContext context, Product product, Function addToCart
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.center,
-          spacing: 10,
+          spacing: 5,
           children: [
             Center(
               child: Container(
@@ -429,6 +480,16 @@ void openUpProductInfo(BuildContext context, Product product, Function addToCart
                 ),
               ),
             ),
+
+            Image.asset(
+              "assets/account/user_defaultpfp.png",
+              fit: BoxFit.cover,
+              height: 170,
+            ),
+
+            SizedBox(),
+            SizedBox(),
+
             Text(
               product.name,
               style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
@@ -441,9 +502,9 @@ void openUpProductInfo(BuildContext context, Product product, Function addToCart
               product.quantity,
               style: TextStyle(fontSize: 16),
             ),
-            
+
             Spacer(),
-            
+                        
             Text(
               '${product.price} €',
               style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
@@ -454,7 +515,10 @@ void openUpProductInfo(BuildContext context, Product product, Function addToCart
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),
+
             SizedBox(),
+            SizedBox(),
+            
             ElevatedButton(
               onPressed: () {
                 addToCart(product);
@@ -469,12 +533,19 @@ void openUpProductInfo(BuildContext context, Product product, Function addToCart
                 ),
                 padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               ),
-              child: Text(
-                "Ajouter au panier",
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600
-                ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                spacing: 20,
+                children: [
+                  Icon(Icons.add_shopping_cart_rounded, color: colors.white,),
+                  Text(
+                    "Ajouter au panier",
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600
+                    ),
+                  ),
+                ],
               ),
             ),
             SizedBox(),

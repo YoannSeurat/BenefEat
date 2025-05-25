@@ -63,13 +63,6 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> {
   int _selectedIndex = 0;
 
-  final List<Widget> _pages = [
-    const HomePage(),
-    const ProductsPage(),
-    const FavoritesPage(),
-    const AccountPage(),
-  ];
-
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
@@ -81,7 +74,12 @@ class _MainPageState extends State<MainPage> {
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: appBar(),
-      body: _pages[_selectedIndex],
+      body: [
+        HomePage(onProductsTap: () => _onItemTapped(1)), // <-- pass callback
+        const ProductsPage(),
+        const FavoritesPage(),
+        const AccountPage(),
+      ][_selectedIndex],
       bottomNavigationBar: customNavigationBar(_selectedIndex, _onItemTapped),
       backgroundColor: colors.white,
     );
