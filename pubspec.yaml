@@ -30,23 +30,31 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  flutter_svg: ^2.0.7
-
+  flutter_svg: ^2.1.0
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
-  flutter_native_splash: ^2.4.5
-
+  flutter_native_splash: ^2.4.6
+  image_picker: ^0.8.7+4
+  path_provider: ^2.1.2
+  url_launcher: ^6.2.5
+  sqflite: ^2.3.3
+  path: ^1.9.1
+  shared_preferences: ^2.2.2
+  geocoding: ^2.1.0
+  geolocator: ^10.0.0
+  
+  
 dev_dependencies:
   flutter_test:
     sdk: flutter
-
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^5.0.0
+  flutter_launcher_icons: ^0.14.3
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -54,19 +62,35 @@ dev_dependencies:
 # The following section is specific to Flutter packages.
 flutter:
   assets:
+    - assets/data/userInfo.json
+    - assets/data/auchan.db
+    - assets/account/icon_edit_white.png
+    - assets/account/icon_edit_black.png
+    - assets/account/user_defaultpfp.png
+    - assets/logos/splashscreen_logo_500_780.png
+    - assets/logos/splashscreen_logo_960.png
     - assets/logos/logo_transparent_blackwhite.svg
     - assets/logos/logo_transparent_blackwhite.png
     - assets/logos/logo_transparent_redblack.svg
     - assets/logos/logo_transparent_redblack.png
+    - assets/logos/Lidl.png
+    - assets/logos/Monoprix.png
+    - assets/logos/products_image.png
     - assets/navbar/home_active.png
     - assets/navbar/home_inactive.png
-    - assets/navbar/recipes_active.png
-    - assets/navbar/recipes_inactive.png
     - assets/navbar/star_active.png
     - assets/navbar/star_inactive.png
-    - assets/appbar/userprofile_black.png
-    - assets/appbar/hamburger_black.png
-    - assets/searchbar/search_grey.png
+    - assets/navbar/userprofile_active.png
+    - assets/navbar/userprofile_inactive.png
+    - assets/navbar/products_active.png
+    - assets/navbar/products_inactive.png
+    - assets/other_icons/search_grey.png
+    - assets/other_icons/trash.png
+    - assets/other_icons/trash_white.png
+    - assets/other_icons/star_fav.png
+    - assets/other_icons/star_unfav.png
+    - assets/backgrounds/splashscreen_background.png
+    - assets/backgrounds/loginpage_background.png
     
   
   # The following line ensures that the Material Icons font is
@@ -106,9 +130,14 @@ flutter_native_splash:
   ios: true
   web: false
 
-  background_image: "assets/logos/splashscreen_background.png"
+  background_image: "assets/backgrounds/splashscreen_background.png"
   image: "assets/logos/splashscreen_logo_960.png"
 
   android_12:
     color: "#eaeaea"
     image: "assets/logos/splashscreen_logo_960.png"
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/logos/logo_transparent_redblack_square.png"
