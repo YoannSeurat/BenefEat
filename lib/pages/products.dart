@@ -1,11 +1,15 @@
 import 'dart:convert';
+import 'package:benefeat/constants/user_info.dart' as userinfo;
 import 'package:flutter/material.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:benefeat/pages/product_class.dart';
 import 'package:benefeat/constants/databases.dart';
 import 'package:benefeat/constants/colors.dart' as colors;
 import 'package:benefeat/constants/constants.dart' as constants;
+import 'package:url_launcher/url_launcher.dart';
 
 class ProductsPage extends StatefulWidget {
   const ProductsPage({super.key});
@@ -92,6 +96,39 @@ class _ProductsPageState extends State<ProductsPage> {
     saveFavorites();
   }
 
+  String userAddress = "";
+  Position? userPosition;
+
+  Future<void> _loadUserAddress() async {
+    final address = await userinfo.getSpecificUserInfo("adress");
+    setState(() => userAddress = address);
+    
+    if (userAddress == 'Utilisateur déconnecté') return;
+    List<Location> locations = [];
+    try {
+      locations = await locationFromAddress(userAddress);
+    } catch (e) {
+      locations = [];
+    }
+    if (locations.isNotEmpty) {
+      setState(() {
+        userPosition = Position(
+          latitude: locations.first.latitude,
+          longitude: locations.first.longitude,
+          timestamp: DateTime.now(),
+          accuracy: 0,
+          altitude: 0,
+          heading: 0,
+          speed: 0,
+          speedAccuracy: 0,
+          altitudeAccuracy: 0,
+          headingAccuracy: 0,
+        );
+      });
+    }
+  }
+
+
   @override
   void initState() {
     super.initState();
@@ -103,6 +140,7 @@ class _ProductsPageState extends State<ProductsPage> {
     _productsFuture = fetchProducts();
     loadCart();
     loadFavorites();
+    _loadUserAddress();
   }
 
   @override
@@ -116,7 +154,7 @@ class _ProductsPageState extends State<ProductsPage> {
     return Scaffold(
       backgroundColor: colors.white,
       body: body(context, _query, _updateQuery, _isSearchBarFocused, _searchBarFocusNode, _productsFuture, _addToCart, _favorites, _toggleFavorite),
-      floatingActionButton: floatingActionButton(context, _cart, _removeFromCart),
+      floatingActionButton: floatingActionButton(context, _cart, _removeFromCart, userPosition),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
   }
@@ -192,7 +230,21 @@ Widget body(BuildContext context, String query, Function updateQuery, bool isSea
           child: FutureBuilder<List<Product>>(
             future: productsFuture,
             builder: (context, snapshot) {
-              if (!snapshot.hasData) return Center(child: CircularProgressIndicator());
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Center(child: CircularProgressIndicator());
+              }
+              if (snapshot.hasError) {
+                return Center(
+                  child: Text(
+                    'Erreur lors du chargement des produits.\n${snapshot.error}',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: Colors.red, fontSize: 16),
+                  ),
+                );
+              }
+              if (!snapshot.hasData || snapshot.data == null) {
+                return Center(child: Text('Aucun produit trouvé.'));
+              }
               final products = snapshot.data!;
               // Filter products by query
               final filteredProducts = query.isEmpty
@@ -201,6 +253,9 @@ Widget body(BuildContext context, String query, Function updateQuery, bool isSea
                       p.name.toLowerCase().contains(query.toLowerCase()) ||
                       p.brand.toLowerCase().contains(query.toLowerCase())
                     ).toList();
+              if (filteredProducts.isEmpty) {
+                return Center(child: Text('Aucun produit trouvé.'));
+              }
               return GridView.builder(
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
@@ -221,7 +276,8 @@ Widget body(BuildContext context, String query, Function updateQuery, bool isSea
 
 
 
-void openCartPage(BuildContext context, List<Product> cart, Future<void> Function(Product) removeFromCart) {
+
+void openCartPage(BuildContext context, List<Product> cart, Future<void> Function(Product) removeFromCart, Position? userPosition) {
   showModalBottomSheet(
     context: context,
     backgroundColor: colors.white,
@@ -244,7 +300,7 @@ void openCartPage(BuildContext context, List<Product> cart, Future<void> Functio
                   height: 4,
                   margin: EdgeInsets.only(bottom: 16),
                   decoration: BoxDecoration(
-                    color: Colors.grey[300],
+                    color: colors.grey,
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
@@ -331,12 +387,12 @@ void openCartPage(BuildContext context, List<Product> cart, Future<void> Functio
                 child: ElevatedButton(
                   onPressed: () {
                     if (cart.isNotEmpty) {
-                      // TODO voir suggestions
+                      openSuggestionsSlider(context, cart, userPosition);
                     }
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: cart.isEmpty ? colors.grey : colors.red,
-                    foregroundColor: Colors.white,
+                    foregroundColor: colors.white,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(24),
                     ),
@@ -357,18 +413,148 @@ void openCartPage(BuildContext context, List<Product> cart, Future<void> Functio
   );
 }
 
-Widget floatingActionButton(BuildContext context, List<Product> cart, Future<void> Function(Product) removeFromCart) {
+
+
+void openSuggestionsSlider(
+  BuildContext context,
+  List<Product> cart,
+  Position? userPosition
+) {
+  final bestStores = constants.getBestStores(userPosition);
+
+  showModalBottomSheet(
+    context: context,
+    backgroundColor: colors.white,
+    isScrollControlled: true,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+    ),
+    builder: (context) => FractionallySizedBox(
+      heightFactor: 0.7,
+      child: Padding(
+        padding: EdgeInsets.all(24),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          spacing: 40,
+          children: [
+            Center(
+              child: Container(
+                width: 40,
+                height: 4,
+                margin: EdgeInsets.only(bottom: 16),
+                decoration: BoxDecoration(
+                  color: colors.grey,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+            ),
+            
+            Center(
+              child: Text(
+                "Suggestions de magasins",
+                style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
+              ),
+            ),
+
+            (bestStores.isEmpty)
+              ? Expanded(
+                child: Center(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    spacing: 20,
+                    children: [
+                      Icon(Icons.warning_amber_rounded, color: colors.red,),
+                      Text(
+                        "Votre adresse est invalide",
+                        style: TextStyle(
+                          color: colors.red,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 15
+                        ),
+                      ),
+                      Icon(Icons.warning_amber_rounded, color: colors.red,),
+                    ],
+                  ) 
+                )
+              )
+              : Expanded(
+                child: ListView.separated(
+                  itemCount: bestStores.length,
+                  separatorBuilder: (_, __) => Divider(),
+                  itemBuilder: (context, index) {
+                    final store = bestStores[index];
+                    return Stack(
+                      children: [
+                        ListTile(
+                          leading: Image.asset(
+                            "assets/logos/${store['name']}.png",
+                            width: 40,
+                            height: 40,
+                            fit: BoxFit.contain,
+                          ),
+                          title: Text(store['name'], style: TextStyle(fontWeight: FontWeight.bold)),
+                          subtitle: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(store['adress'], maxLines: 2, overflow: TextOverflow.ellipsis,),
+                              Text(
+                                "${store['score']} ★  •  ${(store['distance'] / 1000).toStringAsFixed(2)} km",
+                              ),
+                            ],
+                          ),
+                          trailing: Icon(Icons.open_in_new, color: colors.black),
+                          onTap: () async {
+                            final url = Uri.parse("https://www.google.com/maps?q=${Uri.encodeComponent(store['adress'])}");
+                            if (await canLaunchUrl(url)) {
+                              await launchUrl(url);
+                            }
+                          },
+                        ),
+                        if (index == 0)
+                          Positioned(
+                            left: 0,
+                            top: 0,
+                            child: IgnorePointer(
+                              child: Container(
+                                width: MediaQuery.of(context).size.width * 0.85,
+                                height: 92,
+                                decoration: BoxDecoration(
+                                  color: Colors.transparent,
+                                  border: Border.all(
+                                    color: colors.darkred.withAlpha(200),
+                                    width: 4,
+                                  ),
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                              ),
+                            ),
+                          ),
+                      ],
+                    );
+                  },
+                ),
+              ),
+          ],
+        ),
+      ),
+    ),
+  );
+}
+
+
+
+Widget floatingActionButton(BuildContext context, List<Product> cart, Future<void> Function(Product) removeFromCart, Position? userPosition) {
   return Stack(
     alignment: Alignment.center,
     children: [
       FloatingActionButton(
         onPressed: () {
-          openCartPage(context, cart, removeFromCart);
+          openCartPage(context, cart, removeFromCart, userPosition);
         },
         backgroundColor: cart.isEmpty ? colors.grey : colors.red,
         shape: CircleBorder(),
         elevation: 6,
-        child:  Icon(Icons.shopping_cart, size: 28, color: Colors.white),
+        child:  Icon(Icons.shopping_cart, size: 28, color: colors.white),
       ),
       if (cart.isNotEmpty)
         Positioned(
@@ -379,7 +565,7 @@ Widget floatingActionButton(BuildContext context, List<Product> cart, Future<voi
             backgroundColor: Colors.red,
             child: Text(
               '${cart.length}',
-              style: TextStyle(color: Colors.white, fontSize: 12),
+              style: TextStyle(color: colors.white, fontSize: 12),
             ),
           ),
         ),
@@ -475,7 +661,7 @@ void openUpProductInfo(BuildContext context, Product product, Function addToCart
                 height: 4,
                 margin: EdgeInsets.only(bottom: 16),
                 decoration: BoxDecoration(
-                  color: Colors.grey[300],
+                  color: colors.grey,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -566,7 +752,16 @@ double parseDouble(dynamic value) {
 
 Future<List<Product>> fetchProducts() async {
   final db = await DatabaseHelper.database;
-  final List<Map<String, dynamic>> maps = await db.query('auchan');
+  final List<Map<String, dynamic>> maps = [];
+  for (final table in ['auchan', 'carrefour', 'lidl']) {
+    try {
+      final tableMaps = await db.query(table);
+      maps.addAll(tableMaps);
+    } catch (e, stack) {
+      print('Error querying table $table: $e');
+      print(stack);
+    }
+  }
   //print(maps);
   //print(maps.length);
   final productsList = <Product>[];
@@ -584,10 +779,8 @@ Future<List<Product>> fetchProducts() async {
     } catch (e, stack) {
       print('Error at iteration $i: $e');
       print(stack);
-      break; // Stop the loop if there's an error
+      // Continue to next product
     }
   }
-  //print("/// coucoucoucoucou ///");
-  //print(productsList);
   return productsList;
 }

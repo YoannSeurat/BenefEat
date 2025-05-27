@@ -63,7 +63,7 @@ dev_dependencies:
 flutter:
   assets:
     - assets/data/userInfo.json
-    - assets/data/auchan.db
+    - assets/data/databases.db
     - assets/account/icon_edit_white.png
     - assets/account/icon_edit_black.png
     - assets/account/user_defaultpfp.png
@@ -73,8 +73,10 @@ flutter:
     - assets/logos/logo_transparent_blackwhite.png
     - assets/logos/logo_transparent_redblack.svg
     - assets/logos/logo_transparent_redblack.png
+    - assets/logos/logo_AS_Monaco_FC_2021.png
     - assets/logos/Lidl.png
     - assets/logos/Monoprix.png
+    - assets/logos/Intermarche.png
     - assets/logos/products_image.png
     - assets/navbar/home_active.png
     - assets/navbar/home_inactive.png

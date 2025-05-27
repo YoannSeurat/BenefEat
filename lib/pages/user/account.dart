@@ -12,7 +12,8 @@ import 'package:benefeat/constants/constants.dart' as constants;
 import 'package:benefeat/constants/user_info.dart' as userinfo;
 
 class AccountPage extends StatefulWidget {
-  const AccountPage({super.key});
+  final VoidCallback? onUserChanged;
+  const AccountPage({super.key, this.onUserChanged});
 
   @override
   State<AccountPage> createState() => _AccountPageState();
@@ -173,10 +174,10 @@ class _AccountPageState extends State<AccountPage> {
           SizedBox(height: 10),
 
           // Personal Info Navigator
-          buttonGoToPage(context, "Informations personnelles", PersonalInformationPage(), loadUserInfo),
+          buttonGoToPage(context, "Informations personnelles", PersonalInformationPage(), loadUserInfo, widget.onUserChanged),
 
           // Help and Contact
-          buttonGoToPage(context, "Aide et contact", HelpAndContactPage(), loadUserInfo),
+          buttonGoToPage(context, "Aide et contact", HelpAndContactPage(), loadUserInfo, widget.onUserChanged),
 
           SizedBox(),
           
@@ -272,7 +273,13 @@ Future<void> logout(BuildContext context, setLoggedIn) async {
 }
 
 
-Widget buttonGoToPage(context, String nomPage, Widget page, Function loadUserInfo){
+Widget buttonGoToPage(
+  context,
+  String nomPage,
+  Widget page,
+  Function loadUserInfo,
+  [VoidCallback? onUserChanged]
+) {
   return ElevatedButton(
     style: ButtonStyle(
       backgroundColor: WidgetStatePropertyAll(colors.lightgrey),
@@ -305,8 +312,11 @@ Widget buttonGoToPage(context, String nomPage, Widget page, Function loadUserInf
           },
           transitionDuration: const Duration(milliseconds: 400),
         ),
-      ).then( (_) async {
+      ).then((_) async {
         loadUserInfo();
+        if (onUserChanged != null) {
+          onUserChanged();
+        }
       });
     },
   );

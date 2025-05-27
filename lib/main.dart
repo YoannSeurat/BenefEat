@@ -6,6 +6,7 @@ import 'package:benefeat/pages/home.dart';
 import 'package:benefeat/pages/favorites.dart';
 import 'package:benefeat/pages/products.dart';
 import 'package:benefeat/pages/user/account.dart';
+import 'package:benefeat/constants/user_info.dart' as userinfo;
 import 'package:benefeat/constants/colors.dart' as colors;
 import 'package:benefeat/constants/constants.dart' as constants;
 
@@ -69,16 +70,36 @@ class _MainPageState extends State<MainPage> {
     });
   }
 
+  String username = "Utilisateur déconnecté";
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUsername();
+  }
+
+  Future<void> _loadUsername() async {
+    String fetchedUsername = await userinfo.getSpecificUserInfo("username");
+    setState(() {
+      username = fetchedUsername;
+    });
+  }
+
+  void refreshAll() {
+    _loadUsername();
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: true,
-      appBar: appBar(),
+      appBar: appBar(username),
       body: [
         HomePage(onProductsTap: () => _onItemTapped(1)), // <-- pass callback
         const ProductsPage(),
         const FavoritesPage(),
-        const AccountPage(),
+        AccountPage(onUserChanged: refreshAll),
       ][_selectedIndex],
       bottomNavigationBar: customNavigationBar(_selectedIndex, _onItemTapped),
       backgroundColor: colors.white,
@@ -103,7 +124,7 @@ class _MainPageState extends State<MainPage> {
   child: _pages[_selectedIndex],
 ), */
 
-AppBar appBar() {
+AppBar appBar(String username) {
   return AppBar(
     backgroundColor: colors.white.withAlpha(50),
     toolbarHeight: constants.APPBAR_HEIGHT,
@@ -118,7 +139,9 @@ AppBar appBar() {
     elevation: 0,
 
     title: Image.asset(
-      'assets/logos/logo_transparent_redblack.png',
+      (username.toLowerCase().contains("heilmann"))
+        ? 'assets/logos/logo_AS_Monaco_FC_2021.png'
+        : 'assets/logos/logo_transparent_redblack.png',
       width: 70,
     ),
     centerTitle: true,

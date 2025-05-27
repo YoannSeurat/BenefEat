@@ -15,10 +15,10 @@ class DatabaseHelper {
 
   static Future<Database> _initDb() async {
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
-    String path = join(documentsDirectory.path, "auchan.db");
+    String path = join(documentsDirectory.path, "databases.db");
 
     if (!await File(path).exists()) {
-      ByteData data = await rootBundle.load("assets/data/auchan.db");
+      ByteData data = await rootBundle.load("assets/data/databases.db");
       List<int> bytes = data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
       await File(path).writeAsBytes(bytes, flush: true);
     }

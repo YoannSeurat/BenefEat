@@ -65,45 +65,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  // store list with coordinates (example data)
-  final List<Map<String, dynamic>> stores = [
-    {
-      'name': 'Lidl',
-      'score': 4.5,
-      'adress' : '44 rue Lucien Faure, 33000 Bordeaux',
-      'position': Position(
-        latitude: 44.862232, 
-        longitude: -0.555781,
-        timestamp: DateTime.now(),
-        accuracy: 0,
-        altitude: 0,
-        heading: 0,
-        speed: 0,
-        speedAccuracy: 0,
-        altitudeAccuracy: 0,
-        headingAccuracy: 0,
-      )
-    },
-    {
-      'name': 'Monoprix',
-      'score': 4.0,
-      'adress' : '10 rue Lucien Faure, 33000 Bordeaux',
-      'position': Position(
-        latitude: 44.860888,
-        longitude: -0.554968,
-        timestamp: DateTime.now(),
-        accuracy: 0,
-        altitude: 0,
-        heading: 0,
-        speed: 0,
-        speedAccuracy: 0,
-        altitudeAccuracy: 0,
-        headingAccuracy: 0,
-      )
-    },
-  ];
-
-  Future<List<Map<String, dynamic>>> _getStores() async => stores;
+  Future<List<Map<String, dynamic>>> _getStores() async => constants.STORES;
 
   void _openMaps() async {
     if (userAddress == 'Utilisateur déconnecté') return;
@@ -168,17 +130,21 @@ class _HomePageState extends State<HomePage> {
             future: _getStores(),
             builder: (context, snapshot) {
               if (!snapshot.hasData) return CircularProgressIndicator();
-              return Wrap(
-                spacing: 5,
-                children: snapshot.data!.map((store) => FutureBuilder<double?>(
-                  future: _calculateDistance(store['position']),
-                  builder: (context, distanceSnapshot) {
-                    return storeCard(
-                      store,
-                      distance: distanceSnapshot.data,
-                    );
-                  },
-                )).toList(),
+              return SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: snapshot.data!.map((store) => 
+                    FutureBuilder<double?>(
+                      future: _calculateDistance(store['position']),
+                      builder: (context, distanceSnapshot) {
+                        return storeCard(
+                          store,
+                          distance: distanceSnapshot.data,
+                        );
+                      },
+                    )
+                  ).toList(),
+                ),
               );
             },
           ),
@@ -188,6 +154,67 @@ class _HomePageState extends State<HomePage> {
           Text("Parcourir", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 25)),
 
           productSection(context),
+
+          //! debug
+          FutureBuilder<String>(
+            future: userinfo.getSpecificUserInfo("email"),
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) return SizedBox();
+              if (snapshot.data == "benefeatefrei@gmail.com") {
+                return ElevatedButton(
+                  onPressed: () async {
+                    final userInfo = await userinfo.getUserInfo();
+                    if(!context.mounted) return;
+                    showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                      title: Text("User Info"),
+                      content: Text(userInfo.toString()),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.of(context).pop(),
+                          child: Text("OK"),
+                        ),
+                      ],
+                      ),
+                    );
+                  },
+                  child: Text("show user info"),
+                );
+              }
+              return SizedBox();
+            },
+          ),
+          //! debug
+          FutureBuilder<String>(
+            future: userinfo.getSpecificUserInfo("email"),
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) return SizedBox();
+              if (snapshot.data == "benefeatefrei@gmail.com") {
+                return ElevatedButton(
+                  onPressed: () async {
+                    final beststores = constants.getBestStores(userPosition);
+                    if(!context.mounted) return;
+                    showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                      title: Text("Best stores"),
+                      content: Text(beststores.toString()),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.of(context).pop(),
+                          child: Text("OK"),
+                        ),
+                      ],
+                      ),
+                    );
+                  },
+                  child: Text("show best stores"),
+                );
+              }
+              return SizedBox();
+            },
+          ),
         ],
       ),
     );
@@ -209,7 +236,7 @@ class _HomePageState extends State<HomePage> {
             SizedBox(height: 5),
             Text(store['name'], style: TextStyle(fontWeight: FontWeight.bold)),
             Text(
-              "${store['score']}/5",
+              "${store['score']}/5 ★",
               style: TextStyle(
                 color: colors.darkred,
                 fontWeight: FontWeight.bold,
@@ -217,7 +244,7 @@ class _HomePageState extends State<HomePage> {
             ),
             if (distance != null)
               Text(
-                "${(distance / 1000).toStringAsFixed(1)} km",
+                "${(distance / 1000).toStringAsFixed(2)} km",
                 style: TextStyle(fontSize: 12),
               ),
           ],
@@ -257,7 +284,7 @@ class _HomePageState extends State<HomePage> {
                 children: [
                   Text("Produits", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 22),),
                   Text(
-                    "Vos courses, en toute simplicité",
+                    "Faites vos courses,\nen full benef 🤩",
                     style: TextStyle(fontSize: 15),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
